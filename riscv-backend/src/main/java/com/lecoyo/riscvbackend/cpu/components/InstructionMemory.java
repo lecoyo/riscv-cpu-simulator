@@ -16,13 +16,13 @@ public class InstructionMemory {
      * Reads the instruction word at byte address {@code pc}.
      * {@code pc} must be word-aligned (a multiple of 4).
      *
-     * @param pc byte address of the instruction
+     * @param a byte address of the instruction
      * @return the 32-bit instruction word starting at address {@code pc}
      */
-    public int read(int pc) {
-        return ((memory[pc] & 0xFF) << 24) |
-                ((memory[pc + 1] & 0xFF) << 16) |
-                ((memory[pc + 2] & 0xFF) << 8) |
-                ((memory[pc + 3] & 0xFF));
+    public int read(int a) {
+        return ((memory[a] & 0xFF) << 24) |
+                ((memory[a + 1] & 0xFF) << 16) |
+                ((memory[a + 2] & 0xFF) << 8) |
+                ((memory[a + 3] & 0xFF));
     }
 }

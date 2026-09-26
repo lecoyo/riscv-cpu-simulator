@@ -17,18 +17,18 @@ public class DataMemory {
      * If {@code memWrite} is true, writes the {@code writeData} to the given address at {@code aluResult}.
      * If {@code memWrite} is false, reads the data at {@code aluResult} and returns it.
      *
-     * @param aluResult the address for the operation
-     * @param writeData the data to write
-     * @param memWrite switch between read and write mode
+     * @param a the address for the operation
+     * @param wd the data to write
+     * @param we switch between read and write mode
      * @return the 32-bit word starting at address {@code aluResult}, or {@code 0} if {@code memWrite} is true.
      */
-    public int operate(int aluResult, int writeData, boolean memWrite) {
-        if (memWrite) {
-            write(aluResult, writeData);
+    public int operate(int a, int wd, boolean we) {
+        if (we) {
+            write(a, wd);
             return 0;
         }
         else {
-            return read(aluResult);
+            return read(a);
         }
     }
 

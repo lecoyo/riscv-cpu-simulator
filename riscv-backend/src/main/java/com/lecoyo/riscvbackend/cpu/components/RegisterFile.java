@@ -28,10 +28,10 @@ public class RegisterFile {
      *
      * @param a3 address of the register to write to
      * @param wd3 the data to write
-     * @param regWrite switch to enable writing
+     * @param we3 switch to enable writing
      */
-    public void write(int a3, int wd3, boolean regWrite) {
-        if (regWrite && a3 != 0) {
+    public void write(int a3, int wd3, boolean we3) {
+        if (we3 && a3 != 0) {
             registers[a3] = wd3;
         }
     }
