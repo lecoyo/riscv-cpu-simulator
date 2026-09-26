@@ -3,7 +3,7 @@ package com.lecoyo.riscvbackend.assembly;
 import com.lecoyo.riscvbackend.cpu.CPUState;
 
 /**
- * Abtract Instruction field for
+ * Abstract Instruction field for
  */
 public abstract class Instruction {
     public CPUState cpu;
