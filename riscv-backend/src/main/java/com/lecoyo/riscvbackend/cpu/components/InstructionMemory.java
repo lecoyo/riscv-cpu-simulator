@@ -17,7 +17,7 @@ public class InstructionMemory {
      * {@code pc} must be word-aligned (a multiple of 4).
      *
      * @param pc byte address of the instruction
-     * @return 32-bit instruction starting at address {@code pc}
+     * @return the 32-bit instruction word starting at address {@code pc}
      */
     public int read(int pc) {
         return ((memory[pc] & 0xFF) << 24) |
