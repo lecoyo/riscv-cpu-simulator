@@ -2,7 +2,9 @@ package com.lecoyo.riscvbackend.assembly.types;
 
 import com.lecoyo.riscvbackend.assembly.Instruction;
 import com.lecoyo.riscvbackend.cpu.CPUState;
+import lombok.Getter;
 
+@Getter
 public class UType extends Instruction {
     private byte opcode;
     private byte rd;
