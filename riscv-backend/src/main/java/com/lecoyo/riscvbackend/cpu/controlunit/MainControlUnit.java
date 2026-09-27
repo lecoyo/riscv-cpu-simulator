@@ -4,9 +4,16 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 public class MainControlUnit {
-
-    public ControlSignals operate(byte op) {
-        InstructionFormat instructionFormat = decode(op);
+    /**
+     * Decodes the instruction opcode into its control signals.
+     *
+     * @param op the 7-bit opcode of the instruction
+     * @return the control signals for this instruction, with {@code aluControl}
+     *         holding the intermediate {@code ALUOp} rather than the final ALU code
+     * @throws IllegalArgumentException if {@code op} does not match a known instruction format
+     */
+    public ControlSignals decode(byte op) {
+        InstructionFormat instructionFormat = decodeTypes(op);
 
         return switch (instructionFormat) {
             case I_TYPE_LOAD -> new ControlSignals(false, true, false, true, true, (byte) 0b00, (byte) 0b000);
@@ -20,7 +27,7 @@ public class MainControlUnit {
         };
     }
 
-    private InstructionFormat decode(byte op) {
+    private InstructionFormat decodeTypes(byte op) {
         return switch (op) {
             case 0b0000011 -> InstructionFormat.I_TYPE_LOAD;
             case 0b0010011, 0b1100111 -> InstructionFormat.I_TYPE_ALU;

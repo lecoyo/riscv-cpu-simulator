@@ -1,13 +1,24 @@
 package com.lecoyo.riscvbackend.cpu.controlunit;
 
 public class ALUControl {
+    /**
+     * Refines a coarse ALU operation selector into the final 4-bit ALU
+     * operation code, using {@code funct3}/{@code funct7} for R-Type and
+     * I-Type-ALU instructions.
+     *
+     * @param aluOp  the coarse ALU operation selector
+     * @param funct3 the 3-bit funct3 field
+     * @param funct7 the 7-bit funct7 field
+     * @return the 4-bit ALU control code
+     * @throws IllegalArgumentException if {@code aluOp} or {@code funct3} is unknown
+     */
     public byte decode(byte aluOp, byte funct3, byte funct7) {
         return switch (aluOp) {
             case 0b00 -> 0b0000; // load/store
             case 0b01 -> 0b1000; // branch
             case 0b10 -> decodeRType(funct3, funct7);      // R-Type
             case 0b11 -> decodeIType(funct3, funct7);      // I-Type-ALU
-            default -> throw new IllegalStateException("Unknown Opcode: " + aluOp);
+            default -> throw new IllegalArgumentException("Unknown Opcode: " + aluOp);
         };
     }
 
