@@ -2,8 +2,6 @@ package com.lecoyo.riscvbackend.cpu;
 
 import lombok.Getter;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @Getter
