@@ -1,29 +1,40 @@
 package com.lecoyo.riscvbackend.assembly.load;
 
 import com.lecoyo.riscvbackend.assembly.Instruction;
-import com.lecoyo.riscvbackend.assembly.ProgramData;
+import com.lecoyo.riscvbackend.assembly.ProgramData;import lombok.AllArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+@AllArgsConstructor
 public class InstructionLoader {
     private String[] mnemonics;
 
+    /**
+     * Iterates through loaded string array <code>mnemonics</code> and returns a ProgramData object with all instruction
+     * objects and labels.
+     * @return <code>ProgramData</code> object with all instructions and labels
+     */
     public ProgramData getObjects() {
         InstructionParser parser = new InstructionParser();
         List<Instruction> instructions = new ArrayList<>();
         HashMap<String, Integer> labels = new HashMap<>();
 
-        for(int i = 0; i < mnemonics.length; i++) {
-            String s = mnemonics[i];
+        int pc = 0;
+
+        for (String mnemonic : mnemonics) {
+            String s = mnemonic;
             s = clean(s);
 
-            if(!parser.isLabel(s))
-                instructions.add(parser.parse(s));
-
-            String labelName = s.substring(0, s.indexOf(":"));
-            labels.put(labelName, (i + 1) * 4);
+            if (parser.isLabel(s)) {
+                String labelName = s.substring(0, s.indexOf(":"));
+                labels.put(labelName, pc);
+            } else {
+                Instruction instruction = parser.parse(s);
+                instructions.add(instruction);
+                pc += 4;
+            }
         }
 
         return new ProgramData(instructions, labels);
