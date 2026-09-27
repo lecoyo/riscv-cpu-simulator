@@ -40,6 +40,13 @@ public class InstructionLoader {
         return new ProgramData(instructions, labels);
     }
 
+    /**
+     * Removes everything after and including a <code>#</code> symbol (representing a comment)
+     * that would otherwise interfere with the parsing step.
+     *
+     * @param line The line to clean
+     * @return Line without comments
+     */
     private String clean(String line) {
         int comment = line.indexOf('#');
         if(comment >= 0) {
