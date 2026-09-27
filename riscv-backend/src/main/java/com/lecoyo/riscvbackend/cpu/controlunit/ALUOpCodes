@@ -1,0 +1,4 @@
+00    ADD
+01    SUB
+10    R-Type Instruction
+11    I-Type-ALU Instruction
