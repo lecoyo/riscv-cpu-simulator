@@ -25,4 +25,8 @@ public class InstructionMemory {
                 ((memory[a + 2] & 0xFF) << 8) |
                 ((memory[a + 3] & 0xFF));
     }
+
+    public int getProgramSize() {
+        return memory.length;
+    }
 }
