@@ -1,6 +1,7 @@
 package com.lecoyo.riscvbackend.cpu;
 
 import com.lecoyo.riscvbackend.cpu.components.DataMemory;
+import com.lecoyo.riscvbackend.cpu.components.Extend;
 import com.lecoyo.riscvbackend.cpu.components.InstructionMemory;
 import com.lecoyo.riscvbackend.cpu.components.RegisterFile;
 import com.lecoyo.riscvbackend.cpu.controlunit.ControlSignals;
@@ -11,6 +12,7 @@ public class SingleCycleProcessor {
     DataMemory dataMemory;
     ControlUnit controlUnit;
     RegisterFile registerFile;
+    Extend extend;
     int pc = 0;
 
     public SingleCycleProcessor(byte[] instructions, int memorySize) {
@@ -32,9 +34,9 @@ public class SingleCycleProcessor {
             byte funct3 = (byte) ((instruction >>> 12) & 0b111); // 14:12
             byte a1 = (byte) ((instruction >>> 15) & 0b11111); // 19:15
             byte a2 = (byte) ((instruction >>> 20) & 0b11111); // 24:20
-            byte funct7 = (byte) ((instruction >>> 25) & 0b1111111); // 31:25
+            byte funct7 = (byte) (instruction >>> 25); // 31:25
 
-            int possibleImmediate = ((instruction >>> 7) & 0b1111111111111111111111111); // 31:7
+            int possibleImmediate = (instruction >>> 7); // 31:7
 
             // decode control signals from control unit
             ControlSignals controlSignals = controlUnit.operate(op, funct3, funct7, false);
@@ -44,7 +46,9 @@ public class SingleCycleProcessor {
             int rd1 = rd[0];
             int rd2 = rd[1];
 
-            // TODO extend unit
+            // extend unit
+            int immExt = extend.operate(possibleImmediate, controlSignals.getImmSrc());
+
             // TODO ALU
         }
     }
