@@ -24,6 +24,7 @@ public class InstructionParser {
         TYPEMAP.put("srai", InstType.I);
         TYPEMAP.put("ori",  InstType.I);
         TYPEMAP.put("andi", InstType.I);
+        TYPEMAP.put("jalr", InstType.I);
 
         // U Type
         TYPEMAP.put("auipc",InstType.U);
@@ -46,8 +47,26 @@ public class InstructionParser {
         TYPEMAP.put("or",   InstType.R);
         TYPEMAP.put("and",  InstType.R);
 
+        // R Type / M extension (?)
+        TYPEMAP.put("mul",      InstType.R);
+        TYPEMAP.put("mulh",     InstType.R);
+        TYPEMAP.put("mulhsu",   InstType.R);
+        TYPEMAP.put("mulhu",    InstType.R);
+        TYPEMAP.put("div",      InstType.R);
+        TYPEMAP.put("divu",     InstType.R);
+        TYPEMAP.put("rem",      InstType.R);
+        TYPEMAP.put("remu",     InstType.R);
+
         // B Type
-        TYPEMAP.put("andi", InstType.I);
+        TYPEMAP.put("beq",  InstType.B);
+        TYPEMAP.put("bne",  InstType.B);
+        TYPEMAP.put("blt",  InstType.B);
+        TYPEMAP.put("bge",  InstType.B);
+        TYPEMAP.put("bltu", InstType.B);
+        TYPEMAP.put("bgeu", InstType.B);
+
+        // J Type
+        TYPEMAP.put("jal",  InstType.J);
     }
 
     public Instruction parse(String instruction) {
