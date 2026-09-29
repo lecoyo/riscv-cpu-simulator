@@ -1,7 +1,5 @@
 package com.lecoyo.riscvbackend.assembly;
 
-import com.lecoyo.riscvbackend.cpu.CPUState;
-
 /**
  * Abstract Instruction field for
  */
