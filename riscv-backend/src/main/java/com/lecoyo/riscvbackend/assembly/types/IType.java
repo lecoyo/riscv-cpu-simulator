@@ -1,7 +1,6 @@
 package com.lecoyo.riscvbackend.assembly.types;
 
 import com.lecoyo.riscvbackend.assembly.Instruction;
-import com.lecoyo.riscvbackend.cpu.CPUState;
 import lombok.Getter;
 
 @Getter
@@ -11,12 +10,12 @@ public class IType extends Instruction {
     private byte rs1;
     private byte imm;
 
-    public IType(CPUState cpu, String text) {
-        super(cpu, text);
+    public IType(byte opcode, byte rd, byte funct3, byte rs1, byte imm) {
+            
     }
 
     @Override
-    protected int assemble(CPUState cpu, String text) {
+    protected int assemble(String mnemonic) {
         return 0;
     }
 }
