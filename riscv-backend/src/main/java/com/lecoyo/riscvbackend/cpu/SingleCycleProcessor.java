@@ -6,6 +6,9 @@ import com.lecoyo.riscvbackend.cpu.controlunit.ControlSignals;
 import com.lecoyo.riscvbackend.cpu.controlunit.ControlUnit;
 import com.lecoyo.riscvbackend.cpu.controlunit.MainControlUnit;
 
+/**
+ * Simulates a single-cycle RISC-V processor.
+ */
 public class SingleCycleProcessor {
     private final InstructionMemory instructionMemory;
     private final DataMemory dataMemory;
@@ -14,12 +17,18 @@ public class SingleCycleProcessor {
     private final Extend extend;
     private final ALU alu;
 
+    // program counter as byte address
     private int pc = 0;
 
     private record DecodeResult(byte op, byte rd, byte funct3, byte rs1, byte rs2, byte funct7, int rawImmediate) {}
-
     private record ExecuteResult(int aluResult, int rd2, int immExt) {}
 
+    /**
+     * Creates a processor with the given program and data memory size.
+     *
+     * @param instructions the program as bytes
+     * @param memorySize   size of the data memory in bytes
+     */
     public SingleCycleProcessor(byte[] instructions, int memorySize) {
         this.instructionMemory = new InstructionMemory(instructions);
         this.dataMemory = new DataMemory(memorySize);
@@ -29,12 +38,18 @@ public class SingleCycleProcessor {
         this.alu = new ALU();
     }
 
+    /**
+     * Executes instructions until pc reaches the end of the program.
+     */
     public void simulate() {
         while (pc < instructionMemory.getProgramSize()) {
             step();
         }
     }
 
+    /**
+     * Executes one instruction.
+     */
     private void step() {
         int instruction = fetch();
         DecodeResult decodeResult = decode(instruction);
@@ -52,10 +67,21 @@ public class SingleCycleProcessor {
         pcUpdate(executeResult, controlSignals);
     }
 
+    /**
+     * Reads the instruction at the current pc.
+     *
+     * @return the 32-bit instruction
+     */
     private int fetch() {
         return instructionMemory.read(pc);
     }
 
+    /**
+     * Splits the instruction word into its bit fields.
+     *
+     * @param instruction the 32-bit instruction
+     * @return the extracted fields
+     */
     private DecodeResult decode(int instruction) {
         return new DecodeResult(
             (byte) (instruction & 0b1111111), // 6:0
@@ -68,6 +94,13 @@ public class SingleCycleProcessor {
         );
     }
 
+    /**
+     * Reads the registers, extends the immediate and computes the ALU result.
+     *
+     * @param decodeResult the decoded instruction fields
+     * @param controlSignals the control signals of the instruction
+     * @return the ALU result, the second register value and the extended Immediate
+     */
     private ExecuteResult execute(DecodeResult decodeResult, ControlSignals controlSignals) {
         // Register file
         int[] rd = registerFile.read(decodeResult.rs1(), decodeResult.rs2());
@@ -84,15 +117,36 @@ public class SingleCycleProcessor {
         return new ExecuteResult(aluResult, rd2, immExt);
     }
 
+    /**
+     * Accesses the data memory (load or store).
+     *
+     * @param executeResult the result of the execute stage
+     * @param controlSignals the control signals of the instruction
+     * @return the data read from memory
+     */
     private int memory(ExecuteResult executeResult, ControlSignals controlSignals) {
         return dataMemory.operate(executeResult.aluResult(), executeResult.rd2(), controlSignals.isMemWrite());
     }
 
+    /**
+     * Selects between ALU result and memory data and writes it to the destination register.
+     *
+     * @param readData the data read from data memory
+     * @param decodeResult the decoded instruction fields
+     * @param executeResult the result of the execute stage
+     * @param controlSignals the control signals of the instruction
+     */
     private void writeBack(int readData, DecodeResult decodeResult, ExecuteResult executeResult, ControlSignals controlSignals) {
         int result = Mux2.select(executeResult.aluResult(), readData, controlSignals.isResultSrc());
         registerFile.write(decodeResult.rd(), result, controlSignals.isRegWrite());
     }
 
+    /**
+     * Sets the pc to either {@code pc + 4} or the branch/jump target.
+     *
+     * @param executeResult the result of the execute stage
+     * @param controlSignals the control signals of the instruction
+     */
     private void pcUpdate(ExecuteResult executeResult, ControlSignals controlSignals) {
         int pcTarget = Adder.add(pc, executeResult.immExt());
         int pcPlus4 = Adder.add(pc, 4);
