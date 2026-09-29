@@ -3,15 +3,15 @@ package com.lecoyo.riscvbackend.assembly;
 /**
  * Abstract Instruction field for
  */
+
 public abstract class Instruction {
-    public CPUState cpu;
     public Byte opcode;
-    public String text;
+    public String mnemonic;
     public Integer binary;
 
-    public Instruction(CPUState cpu, String text) {
-        binary = assemble(cpu, text);
+    public final void encode() {
+        this.binary = assemble(mnemonic);
     }
 
-    protected abstract int assemble(CPUState cpu, String text);
+    protected abstract int assemble(String mnemonic);
 }

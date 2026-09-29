@@ -11,14 +11,17 @@ public class BType extends Instruction {
     private byte rs2;
     private byte imm2;
 
+    private int branchOffset;
     private int fullImmediate;
 
-    public BType(CPUState cpu, String text) {
-        super(cpu, text);
+    public BType(int labelValue, int pc, String mnemonic) {
+        // TODO
+        branchOffset = labelValue - pc;
+        super(mnemonic);
     }
 
     @Override
-    protected int assemble(CPUState cpu, String text) {
+    protected int assemble(String mnemonic) {
         return 0;
     }
 }

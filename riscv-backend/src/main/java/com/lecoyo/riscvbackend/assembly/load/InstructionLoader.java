@@ -31,7 +31,7 @@ public class InstructionLoader {
                 String labelName = s.substring(0, s.indexOf(":"));
                 labels.put(labelName, pc);
             } else {
-                Instruction instruction = parser.parse(s);
+                Instruction instruction = parser.parse(pc, s);
                 instructions.add(instruction);
                 pc += 4;
             }
