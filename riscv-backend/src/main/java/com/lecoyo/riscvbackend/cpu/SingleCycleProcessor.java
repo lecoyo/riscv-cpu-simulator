@@ -11,7 +11,6 @@ public class SingleCycleProcessor {
     RegisterFile registerFile;
     Extend extend;
     ALU alu;
-    int pc = 0;
 
     public SingleCycleProcessor(byte[] instructions, int memorySize) {
         this.instructionMemory = new InstructionMemory(instructions);
@@ -23,8 +22,10 @@ public class SingleCycleProcessor {
 
 
     public void simulate() {
+        int pc = 0;
+
         // Goes through all the instruction stored in 4 byte each
-        for (int i = 0; i < instructionMemory.getProgramSize() / 4; i++) {
+        while (pc < instructionMemory.getProgramSize() / 4) {
             // fetch instruction
             int instruction = instructionMemory.read(pc);
 
@@ -61,7 +62,10 @@ public class SingleCycleProcessor {
             registerFile.write(a3, result, controlSignals.isRegWrite());
 
             // PC counter
-            // TODO adder unit
+            int pcTarget = Adder.add(pc, immExt);
+            int pcPlus4 = Adder.add(pc, 4);
+
+            pc =  Mux2.select(pcPlus4, pcTarget, controlSignals.isPcSrc());
         }
     }
 }
