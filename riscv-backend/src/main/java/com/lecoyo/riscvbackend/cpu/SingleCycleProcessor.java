@@ -1,9 +1,6 @@
 package com.lecoyo.riscvbackend.cpu;
 
-import com.lecoyo.riscvbackend.cpu.components.DataMemory;
-import com.lecoyo.riscvbackend.cpu.components.Extend;
-import com.lecoyo.riscvbackend.cpu.components.InstructionMemory;
-import com.lecoyo.riscvbackend.cpu.components.RegisterFile;
+import com.lecoyo.riscvbackend.cpu.components.*;
 import com.lecoyo.riscvbackend.cpu.controlunit.ControlSignals;
 import com.lecoyo.riscvbackend.cpu.controlunit.ControlUnit;
 
@@ -13,12 +10,15 @@ public class SingleCycleProcessor {
     ControlUnit controlUnit;
     RegisterFile registerFile;
     Extend extend;
+    ALU alu;
     int pc = 0;
 
     public SingleCycleProcessor(byte[] instructions, int memorySize) {
         this.instructionMemory = new InstructionMemory(instructions);
         this.dataMemory = new DataMemory(memorySize);
         this.registerFile = new RegisterFile();
+        this.extend = new Extend();
+        this.alu = new ALU();
     }
 
 
@@ -49,7 +49,19 @@ public class SingleCycleProcessor {
             // extend unit
             int immExt = extend.operate(possibleImmediate, controlSignals.getImmSrc());
 
-            // TODO ALU
+            // ALU
+            int aluSrcB = Mux2.select(rd2, immExt, controlSignals.isAluSrc());
+            int aluResult = alu.operate(rd1, aluSrcB, controlSignals.aluControl);
+
+            // data memory
+            int readData = dataMemory.operate(aluResult, rd2, controlSignals.isMemWrite());
+
+            // write back
+            int result = Mux2.select(aluResult, readData, controlSignals.isResultSrc());
+            registerFile.write(a3, result, controlSignals.isRegWrite());
+
+            // PC counter
+            // TODO adder unit
         }
     }
 }
