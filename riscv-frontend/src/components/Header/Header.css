@@ -1,0 +1,56 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    margin-bottom: 4rem;
+    border-bottom: 2px solid #ddd;
+}
+
+/* logo and title */
+.header-brand {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.header-icon {
+    height: 5rem;
+    width: auto;
+}
+
+/* navigation bar */
+.navbar {
+    display: flex;
+    gap: 4rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 1.5rem;
+}
+
+.navbar a {
+    position: relative;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* animated underlining */
+.navbar a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -0.25rem;
+    width: 100%;
+    height: 2px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.25s ease;
+    pointer-events: none;
+}
+
+.navbar a:hover::after,
+.navbar a.active::after {
+    transform: scaleX(1);
+}
