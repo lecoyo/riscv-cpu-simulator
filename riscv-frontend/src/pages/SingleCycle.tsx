@@ -1,6 +1,6 @@
 function SingleCycle() {
     return (
-        <p>SingleCycle</p>
+        <p>work in progress</p>
     );
 }
 

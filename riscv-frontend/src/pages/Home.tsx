@@ -1,6 +1,8 @@
+import CodeEditor from "../components/CodeEditor/CodeEditor.tsx";
+
 function Home() {
     return (
-        <p>Home</p>
+        <CodeEditor />
     );
 }
 

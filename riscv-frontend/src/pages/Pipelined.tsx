@@ -1,6 +1,6 @@
 function Pipelined() {
     return (
-        <p>Pipelined</p>
+        <p>work in progress</p>
     );
 }
 
