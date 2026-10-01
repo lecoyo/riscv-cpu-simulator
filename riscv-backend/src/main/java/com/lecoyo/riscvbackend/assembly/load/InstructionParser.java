@@ -110,9 +110,13 @@ public class InstructionParser {
 
         if(args == null) throw new IllegalArgumentException("Unknown or invalid instruction: " + instruction);
 
+        // check instruction length
+        int needed = opLengthByType(args.type);
+        if (arguments.length < needed)
+            throw new IllegalArgumentException(arguments[0] + ": expected " + (needed - 1) + " operands");
+
         switch(args.type) {
             case InstType.I: {
-                if(arguments.length < 4) throw new IllegalArgumentException(args.opcode + ": Missing arguments");
                 byte rd = reg(arguments[1]);
                 byte rs1;
                 int imm;
@@ -133,7 +137,7 @@ public class InstructionParser {
                     throw new IllegalArgumentException(arguments[0] + ": immediate out of range: " + imm);
                 }
 
-                return new IType((byte) args.opcode, rd, (byte) args.funct3, rs1, (byte) imm);
+                return new IType((byte) args.opcode, rd, (byte) args.funct3, rs1, (short) imm);
             }
             case InstType.U: {
                 int imm = Integer.decode(arguments[2]);
@@ -176,7 +180,6 @@ public class InstructionParser {
                 return new JType((byte) args.opcode, rd, offset);
             }
             case InstType.R: {
-                if(arguments.length < 4) throw new IndexOutOfBoundsException(args.opcode + ": Missing arguments");
                 return new RType(
                         (byte) args.opcode,
                         reg(arguments[1]),
@@ -196,7 +199,7 @@ public class InstructionParser {
                         (byte) (imm & 0x1F),
                         (byte) args.funct3,
                         reg(arguments[3]),
-                        reg(arguments[2]),
+                        reg(arguments[1]),
                         (byte) ((imm >> 5) & 0x7F)
                 );
             }
@@ -212,7 +215,7 @@ public class InstructionParser {
      * @return
      */
     public String[] clean(String instruction) {
-        instruction = instruction.replaceAll("[+.^:,()]", " ");
+        instruction = instruction.replaceAll("[+^:,()]", " ");
         return instruction.trim().split("\\s+");
     }
 
@@ -243,6 +246,14 @@ public class InstructionParser {
             throw new IllegalArgumentException(mnemonic + ": offset " + offset
                     + " out of range or not 2-byte aligned");
         }
+    }
+
+    private int opLengthByType(InstType type) {
+        return switch (type) {
+            case I, R, B, S -> 4;
+            case U -> 3;
+            case J -> 2;
+        };
     }
 
     private byte reg(String name) {

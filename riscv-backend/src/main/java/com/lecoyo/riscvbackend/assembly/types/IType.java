@@ -8,9 +8,9 @@ public class IType extends Instruction {
     private byte rd;
     private byte funct3;
     private byte rs1;
-    private byte imm;
+    private short imm;
 
-    public IType(byte opcode, byte rd, byte funct3, byte rs1, byte imm) {
+    public IType(byte opcode, byte rd, byte funct3, byte rs1, short imm) {
         this.opcode = opcode;
         this.rd = rd;
         this.funct3 = funct3;
