@@ -1,8 +1,7 @@
 package com.lecoyo.riscvbackend.assembly.load;
 
 import com.lecoyo.riscvbackend.assembly.Instruction;
-import com.lecoyo.riscvbackend.assembly.types.IType;
-import com.lecoyo.riscvbackend.assembly.types.InstType;
+import com.lecoyo.riscvbackend.assembly.types.*;
 
 import java.util.HashMap;
 
@@ -10,9 +9,15 @@ public class InstructionParser {
     private static final HashMap<String, InstInfo> INSTMAP = new HashMap<>();
     private static final HashMap<String, Byte> REGMAP = new HashMap<>();
 
+    private HashMap<String, Integer> labels;
+
     static final int NONE = -1;
 
     record InstInfo(InstType type, int opcode, int funct3, int funct7) {}
+
+    public InstructionParser(HashMap<String, Integer> labels) {
+        this.labels = labels;
+    }
 
     private static void put(String name, InstType t, int opcode, int funct3, int funct7) {
         INSTMAP.put(name, new InstInfo(t, opcode, funct3, funct7));
@@ -113,6 +118,44 @@ public class InstructionParser {
                         Byte.parseByte(arguments[3])
                 );
             }
+            case InstType.U: {
+                return new UType(
+                        (byte) args.opcode,
+                        REGMAP.get(arguments[1]),
+                        Integer.parseInt(arguments[2])
+                );
+            }
+            case InstType.B: {
+                byte rs1 = reg(arguments[1]);
+                byte rs2 = reg(arguments[2]);
+                int target = resolveTarget(arguments[3], pc);
+                int offset = target - pc;
+                checkOffset(offset, 13, arguments[0]);
+
+                // imm[12|10:5]
+                byte imm1 = (byte) ((((offset >> 12) & 0x1) << 6)
+                        |  ((offset >> 5)  & 0x3F));
+                // imm[4:1|11]
+                byte imm2 = (byte) ((((offset >> 1) & 0xF) << 1)
+                        |  ((offset >> 11) & 0x1));
+
+                return new BType(target, pc, imm1, (byte) args.funct3, rs1, rs2, imm2);
+            }
+            case InstType.J: {
+                byte rd;
+                String targetArg;
+                if (arguments.length == 2) {
+                    rd = REGMAP.get("ra");
+                    targetArg = arguments[1];
+                } else {
+                    rd = reg(arguments[1]);
+                    targetArg = arguments[2];
+                }
+                int offset = resolveTarget(targetArg, pc) - pc;
+                checkOffset(offset, 21, arguments[0]);
+
+                return new JType((byte) args.opcode, rd, offset);
+            }
             default: {
                 System.out.println("Unknown or non implemented instruction " + instruction + ".");
             }
@@ -130,7 +173,38 @@ public class InstructionParser {
         return instruction.split(" ");
     }
 
-    public boolean isLabel(String line) {
+    public static boolean isLabel(String line) {
         return line.endsWith(":");
+    }
+
+    private int resolveTarget(String arg, int pc) {
+        Integer address = labels.get(arg);
+        if (address != null) return address;
+        try {
+            return pc + Integer.parseInt(arg);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Unknown label or offset: " + arg);
+        }
+    }
+
+    /**
+     * Verifies that a jump offset is encodable in given immediate width.
+     * Offset must be even and must fit into a signed value of {@code bits} bits.
+     * @param offset
+     * @param mnemonic
+     */
+    private void checkOffset(int offset, int bits, String mnemonic) {
+        int max = (1 << (bits - 1)) - 1;
+        int min = -(1 << (bits - 1));
+        if ((offset & 1) != 0 || offset < min || offset > max) {
+            throw new IllegalArgumentException(mnemonic + ": offset " + offset
+                    + " out of range or not 2-byte aligned");
+        }
+    }
+
+    private byte reg(String name) {
+        Byte r = REGMAP.get(name);
+        if (r == null) throw new IllegalArgumentException("Unknown register: " + name);
+        return r;
     }
 }

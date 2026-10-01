@@ -17,24 +17,37 @@ public class InstructionLoader {
      * @return <code>ProgramData</code> object with all instructions and labels
      */
     public ProgramData getObjects() {
-        InstructionParser parser = new InstructionParser();
-        List<Instruction> instructions = new ArrayList<>();
         HashMap<String, Integer> labels = new HashMap<>();
+        List<Instruction> instructions = new ArrayList<>();
 
         int pc = 0;
 
+        // check for labels
         for (String mnemonic : mnemonics) {
-            String s = mnemonic;
-            s = clean(s);
+            String line = mnemonic.trim();
+            if (line.isEmpty()) continue;
 
-            if (parser.isLabel(s)) {
-                String labelName = s.substring(0, s.indexOf(":"));
-                labels.put(labelName, pc);
+            if (InstructionParser.isLabel(line)) {
+                String labelName = line.substring(0, line.indexOf(':')).trim();
+                if (labels.put(labelName, pc) != null) {
+                    throw new IllegalArgumentException("Duplicate label: " + labelName);
+                }
             } else {
-                Instruction instruction = parser.parse(pc, s);
-                instructions.add(instruction);
                 pc += 4;
             }
+        }
+
+        InstructionParser parser = new InstructionParser(labels);
+        pc = 0;
+
+        // map instructions
+        for (String mnemonic : mnemonics) {
+            String line = mnemonic.trim();
+            if (line.isEmpty() || InstructionParser.isLabel(line)) continue;
+
+            Instruction instruction = parser.parse(pc, line);
+            instructions.add(instruction);
+            pc += 4;
         }
 
         return new ProgramData(instructions, labels);
