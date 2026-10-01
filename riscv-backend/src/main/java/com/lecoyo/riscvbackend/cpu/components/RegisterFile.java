@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class RegisterFile {
-    private int[] registers;
+    private final int[] registers;
 
     /**
      * Creates the register file with 32 registers, all initialized to 0.
