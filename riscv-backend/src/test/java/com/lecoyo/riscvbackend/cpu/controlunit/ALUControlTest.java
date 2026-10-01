@@ -41,7 +41,7 @@ class ALUControlTest {
 
     @Test
     void unknownAluOp_throws() {
-        assertThrows(IllegalStateException.class,
+        assertThrows(IllegalArgumentException.class,
                 () -> aluControl.decode((byte) 0b111, (byte) 0, (byte) 0));
     }
 }
