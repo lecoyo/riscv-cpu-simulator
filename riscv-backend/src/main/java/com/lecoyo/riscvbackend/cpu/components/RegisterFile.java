@@ -1,5 +1,8 @@
 package com.lecoyo.riscvbackend.cpu.components;
 
+import lombok.Getter;
+
+@Getter
 public class RegisterFile {
     private int[] registers;
 

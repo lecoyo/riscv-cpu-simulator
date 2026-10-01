@@ -6,6 +6,9 @@ import com.lecoyo.riscvbackend.cpu.controlunit.ControlSignals;
 import com.lecoyo.riscvbackend.cpu.controlunit.ControlUnit;
 import com.lecoyo.riscvbackend.cpu.controlunit.MainControlUnit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Simulates a single-cycle RISC-V processor.
  */
@@ -23,6 +26,16 @@ public class SingleCycleProcessor {
     private record DecodeResult(byte op, byte rd, byte funct3, byte rs1, byte rs2, byte funct7, int rawImmediate) {}
     private record ExecuteResult(int aluResult, int rd2, int immExt) {}
 
+    public record CpuSnapshot(
+            int pc,
+            int instruction,
+            ControlSignals controlSignals,
+            int[] registers,
+            int aluResult,
+            int immExt,
+            boolean memWrite
+    ) {}
+
     /**
      * Creates a processor with the given program and data memory size.
      *
@@ -39,18 +52,27 @@ public class SingleCycleProcessor {
     }
 
     /**
-     * Executes instructions until pc reaches the end of the program.
+     * Executes the whole program and returns a snapshot after every instruction.
+     *
+     * @return the list of CPU snapshots, one per executed instruction
      */
-    public void simulate() {
+    public List<CpuSnapshot> simulate() {
+        List<CpuSnapshot> trace = new ArrayList<>();
+
         while (pc < instructionMemory.getProgramSize()) {
-            step();
+            trace.add(step());
         }
+
+        return trace;
     }
 
     /**
-     * Executes one instruction.
+     * Executes one instruction and returns the resulting snapshot.
+     *
+     * @return the snapshot after this instruction
      */
-    private void step() {
+    private CpuSnapshot step() {
+        int pcBefore = pc;
         int instruction = fetch();
         DecodeResult decodeResult = decode(instruction);
 
@@ -65,6 +87,16 @@ public class SingleCycleProcessor {
         int readData = memory(executeResult, controlSignals);
         writeBack(readData, decodeResult, executeResult, controlSignals);
         pcUpdate(executeResult, controlSignals);
+
+        return new CpuSnapshot(
+                pcBefore,
+                instruction,
+                controlSignals,
+                registerFile.getRegisters(),
+                executeResult.aluResult(),
+                executeResult.immExt(),
+                controlSignals.isMemWrite()
+        );
     }
 
     /**
