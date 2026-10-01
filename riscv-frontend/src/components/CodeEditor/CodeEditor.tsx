@@ -5,6 +5,16 @@ import play from '../../assets/play.svg'
 function CodeEditor() {
     const [text, setText] = useState('')
 
+    async function simulate() {
+        const res = await fetch('/api/simulate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: text })
+            })
+        const data = await res.text();
+        console.log(data);
+    }
+
     return (
         <div className={"code-editor"}>
             <textarea
@@ -12,10 +22,10 @@ function CodeEditor() {
                 value={text}
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Type RISC-V code here..."
-                spellCheck={"false"}
+                spellCheck={false}
                 rows={10}
             />
-            <button onClick={() => console.log(text)}><img alt={"play-icon"} src={play} />Simulate</button>
+            <button onClick={simulate}><img alt={"play-icon"} src={play} />Simulate</button>
         </div>
     )
 }
