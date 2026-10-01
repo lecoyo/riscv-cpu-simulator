@@ -37,7 +37,7 @@ class ExtendTest {
     @Test
     void jType_negative() {
         int instr = 0b1_1111111111_1_11111111_00000_1101111;
-        assertEquals(-4, extend.operate(possibleImmediate(instr), (byte) 0b011));
+        assertEquals(-2, extend.operate(possibleImmediate(instr), (byte) 0b011));
     }
 
     @Test
