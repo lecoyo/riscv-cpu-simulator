@@ -1,0 +1,45 @@
+.footer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    margin-top: 4rem;
+    margin-bottom: 1rem;
+    border-top: 2px solid #ddd;
+}
+
+.github-logo {
+    height: 3rem;
+    width: auto;
+}
+
+.github-logo:hover {
+    transform: scale(1.15);
+}
+
+.footer a {
+    display: inline-flex;
+    text-decoration: none;
+    color: inherit;
+    font-weight: 600;
+}
+
+.footer a:hover {
+    opacity: 0.7;
+}
+
+.discord-logo {
+    height: 2rem;
+    width: auto;
+}
+
+.discord-logo:hover {
+    transform: scale(1.15);
+}
+
+.discord-support {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}

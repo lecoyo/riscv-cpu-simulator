@@ -20,12 +20,15 @@ public class InstructionMemory {
      * @return the 32-bit instruction word starting at address {@code pc}
      */
     public int read(int a) {
-        return ((memory[a] & 0xFF) << 24) |
-                ((memory[a + 1] & 0xFF) << 16) |
-                ((memory[a + 2] & 0xFF) << 8) |
-                ((memory[a + 3] & 0xFF));
+        return (memory[a] & 0xFF)
+                | ((memory[a + 1] & 0xFF) << 8)
+                | ((memory[a + 2] & 0xFF) << 16)
+                | ((memory[a + 3] & 0xFF) << 24);
     }
 
+    /**
+     * @return the program size in bytes
+     */
     public int getProgramSize() {
         return memory.length;
     }

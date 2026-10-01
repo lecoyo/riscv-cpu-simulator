@@ -1,0 +1,53 @@
+.code-editor {
+    display: flex;
+    flex-direction: column;
+    width: 40%;
+    gap: 1rem;
+}
+
+/* code input text field */
+.code-input {
+    min-height: 50rem;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    background-color: #fafafa;
+    color: inherit;
+    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.code-input:focus {
+    outline: none;
+    border-color: #888;
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.08);
+}
+
+/* simulate button */
+.code-editor button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    height: 4rem;
+    padding: 0 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    background-color: #58bf30;
+    color: white;
+    font-family: inherit;
+    font-size: 1.75rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.code-editor button:hover {
+    background-color: #4aa626;
+}
+
+.code-editor button img {
+    height: 1.75em;
+    width: auto;
+}

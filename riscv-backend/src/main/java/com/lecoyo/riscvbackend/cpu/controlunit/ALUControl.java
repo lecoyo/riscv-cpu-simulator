@@ -16,8 +16,8 @@ public class ALUControl {
         return switch (aluOp) {
             case 0b00 -> 0b0000; // load/store
             case 0b01 -> 0b1000; // branch
-            case 0b10 -> decodeRType(funct3, funct7);      // R-Type
-            case 0b11 -> decodeIType(funct3, funct7);      // I-Type-ALU
+            case 0b10 -> decodeRType(funct3, funct7); // R-Type
+            case 0b11 -> decodeIType(funct3, funct7); // I-Type-ALU
             default -> throw new IllegalArgumentException("Unknown Opcode: " + aluOp);
         };
     }
