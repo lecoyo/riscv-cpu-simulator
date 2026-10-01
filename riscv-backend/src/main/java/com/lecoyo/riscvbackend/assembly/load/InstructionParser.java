@@ -108,21 +108,40 @@ public class InstructionParser {
         String[] arguments = clean(instruction);
         InstInfo args = INSTMAP.get(arguments[0]);
 
+        if(args == null) throw new IllegalArgumentException("Unknown or invalid instruction: " + instruction);
+
         switch(args.type) {
             case InstType.I: {
-                return new IType(
-                        (byte) args.opcode,
-                        REGMAP.get(arguments[1]),
-                        (byte) args.funct3,
-                        REGMAP.get(arguments[2]),
-                        Byte.parseByte(arguments[3])
-                );
+                if(arguments.length < 4) throw new IllegalArgumentException(args.opcode + ": Missing arguments");
+                byte rd = reg(arguments[1]);
+                byte rs1;
+                int imm;
+
+                if (args.opcode == 0b0000011 || args.opcode == 0b1100111) {
+                    imm = Integer.decode(arguments[2]);
+                    rs1 = reg(arguments[3]);
+                } else {
+                    rs1 = reg(arguments[2]);
+                    imm = Integer.decode(arguments[3]);
+                }
+
+                if (args.funct7 != NONE) {
+                    if (imm < 0 || imm > 31)
+                        throw new IllegalArgumentException(arguments[0] + ": shift amount out of range: " + imm);
+                    imm |= args.funct7 << 5;
+                } else if (imm < -2048 || imm > 2047) {
+                    throw new IllegalArgumentException(arguments[0] + ": immediate out of range: " + imm);
+                }
+
+                return new IType((byte) args.opcode, rd, (byte) args.funct3, rs1, (byte) imm);
             }
             case InstType.U: {
+                int imm = Integer.decode(arguments[2]);
+                if(imm < 0 || imm > 0xFFFFF) throw new IllegalArgumentException(arguments[0] + ": immediate out of range: " + imm);
                 return new UType(
                         (byte) args.opcode,
-                        REGMAP.get(arguments[1]),
-                        Integer.parseInt(arguments[2])
+                        reg(arguments[1]),
+                        imm
                 );
             }
             case InstType.B: {
@@ -145,7 +164,7 @@ public class InstructionParser {
                 byte rd;
                 String targetArg;
                 if (arguments.length == 2) {
-                    rd = REGMAP.get("ra");
+                    rd = reg("ra");
                     targetArg = arguments[1];
                 } else {
                     rd = reg(arguments[1]);
@@ -156,11 +175,35 @@ public class InstructionParser {
 
                 return new JType((byte) args.opcode, rd, offset);
             }
+            case InstType.R: {
+                if(arguments.length < 4) throw new IndexOutOfBoundsException(args.opcode + ": Missing arguments");
+                return new RType(
+                        (byte) args.opcode,
+                        reg(arguments[1]),
+                        (byte) args.funct3,
+                        reg(arguments[2]),
+                        reg(arguments[3]),
+                        (byte) args.funct7
+                );
+            }
+            case InstType.S: {
+                int imm = Integer.decode(arguments[2]);
+                if (imm < -2048 || imm > 2047)
+                    throw new IllegalArgumentException(arguments[0] + ": immediate out of range: " + imm);
+
+                return new SType(
+                        (byte) args.opcode,
+                        (byte) (imm & 0x1F),
+                        (byte) args.funct3,
+                        reg(arguments[3]),
+                        reg(arguments[2]),
+                        (byte) ((imm >> 5) & 0x7F)
+                );
+            }
             default: {
-                System.out.println("Unknown or non implemented instruction " + instruction + ".");
+                throw new IllegalStateException("Unknown instruction type " + args.type);
             }
         }
-        return null;
     }
 
     /**
@@ -169,8 +212,8 @@ public class InstructionParser {
      * @return
      */
     public String[] clean(String instruction) {
-        instruction = instruction.replaceAll("[+.^:,]", "");
-        return instruction.split(" ");
+        instruction = instruction.replaceAll("[+.^:,()]", " ");
+        return instruction.trim().split("\\s+");
     }
 
     public static boolean isLabel(String line) {
@@ -181,7 +224,7 @@ public class InstructionParser {
         Integer address = labels.get(arg);
         if (address != null) return address;
         try {
-            return pc + Integer.parseInt(arg);
+            return pc + Integer.decode(arg);
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("Unknown label or offset: " + arg);
         }
