@@ -9,12 +9,14 @@ public class UType extends Instruction {
     private byte rd;
     private int fullImmediate;
 
-    public UType(CPUState cpu, String text) {
-        super(cpu, text);
+    public UType(byte opcode, byte rd, int fullImmediate) {
+        this.opcode = opcode;
+        this.rd = rd;
+        this.fullImmediate = fullImmediate;
     }
 
     @Override
-    protected int assemble(CPUState cpu, String text) {
+    protected int assemble(String mnemonic) {
         return 0;
     }
 }

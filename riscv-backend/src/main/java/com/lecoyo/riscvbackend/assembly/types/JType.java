@@ -11,12 +11,14 @@ public class JType extends Instruction {
 
     private int fullImmediate;
 
-    public JType(CPUState cpu, String text) {
-        super(cpu, text);
+    public JType(byte opcode, byte rd, int imm) {
+        this.opcode = opcode;
+        this.rd = rd;
+        this.imm = imm;
     }
 
     @Override
-    protected int assemble(CPUState cpu, String text) {
+    protected int assemble(String mnemonic) {
         return 0;
     }
 }

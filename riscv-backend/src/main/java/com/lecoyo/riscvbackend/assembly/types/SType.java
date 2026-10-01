@@ -13,12 +13,17 @@ public class SType extends Instruction {
 
     private short fullImmediate;
 
-    public SType(CPUState cpu, String text) {
-        super(cpu, text);
+    public SType(byte imm1, byte funct3, byte rs1, byte rs2, byte imm2)
+    {
+        this.imm1 = imm1;
+        this.funct3 = funct3;
+        this.rs1 = rs1;
+        this.rs2 = rs2;
+        this.imm2 = imm2;
     }
 
     @Override
-    protected int assemble(CPUState cpu, String text) {
+    protected int assemble(String mnemonic) {
         return 0;
     }
 }

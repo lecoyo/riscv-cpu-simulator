@@ -14,10 +14,14 @@ public class BType extends Instruction {
     private int branchOffset;
     private int fullImmediate;
 
-    public BType(int labelValue, int pc, String mnemonic) {
+    public BType(int labelValue, int pc, byte imm1, byte funct3, byte rs1, byte rs2, byte imm2) {
         // TODO
         branchOffset = labelValue - pc;
-        super(mnemonic);
+        this.imm1 = imm1;
+        this.funct3 = funct3;
+        this.rs1 = rs1;
+        this.rs2 = rs2;
+        this.imm2 = imm2;
     }
 
     @Override

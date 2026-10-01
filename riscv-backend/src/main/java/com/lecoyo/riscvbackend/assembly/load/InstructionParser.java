@@ -117,6 +117,7 @@ public class InstructionParser {
                 System.out.println("Unknown or non implemented instruction " + instruction + ".");
             }
         }
+        return null;
     }
 
     /**
