@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router";
 import Header from './components/Header/Header.tsx'
 import Footer from './components/Footer/Footer.tsx'
-import Home from './pages/Home.tsx'
+import Home from './pages/Home/Home.tsx'
 import SingleCycle from './pages/SingleCycle.tsx'
 import MultiCycle from './pages/MultiCycle.tsx'
 import Pipelined from './pages/Pipelined.tsx'
