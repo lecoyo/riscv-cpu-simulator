@@ -1,7 +1,7 @@
 package com.lecoyo.riscvbackend.cpu.components;
 
 public class DataMemory {
-    private byte[] memory;
+    private final byte[] memory;
 
     /**
      * Creates the data memory in the given size.

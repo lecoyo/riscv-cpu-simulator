@@ -92,7 +92,7 @@ public class SingleCycleProcessor {
                 pcBefore,
                 instruction,
                 controlSignals,
-                registerFile.getRegisters(),
+                registerFile.getRegisters().clone(),
                 executeResult.aluResult(),
                 executeResult.immExt(),
                 controlSignals.isMemWrite()
@@ -150,13 +150,17 @@ public class SingleCycleProcessor {
     }
 
     /**
-     * Accesses the data memory (load or store).
+     * Accesses the data memory.
+     * The memory is only accessed if the instruction is a load ({@code resultSrc}) or a store ({@code memWrite}).
+     * For all other instructions, the ALU result is not a memory address, so no access takes place.
      *
      * @param executeResult the result of the execute stage
      * @param controlSignals the control signals of the instruction
-     * @return the data read from memory
+     * @return the data read from memory, or {@code 0} if the instruction is a store or does not access memory
      */
     private int memory(ExecuteResult executeResult, ControlSignals controlSignals) {
+        if (!controlSignals.isMemWrite() && !controlSignals.isResultSrc()) return 0;
+
         return dataMemory.operate(executeResult.aluResult(), executeResult.rd2(), controlSignals.isMemWrite());
     }
 
