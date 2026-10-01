@@ -6,7 +6,7 @@ function Header() {
     return(
         <div className={"header"}>
             <div className={"header-brand"}>
-                <img src={icon} alt={"Lecoyo-logo"} className={"header-icon"}/>
+                <img src={icon} alt={"Lecoyo-logo"} className={"header-logo"}/>
                 <h1>RISC-V CPU Simulator</h1>
             </div>
             <ul className={"navbar"}>
