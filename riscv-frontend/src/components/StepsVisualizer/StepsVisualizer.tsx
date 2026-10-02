@@ -1,6 +1,7 @@
 import './StepsVisualizer.css'
 import type { CpuSnapshot } from '../../types/types.ts'
 import { useState } from 'react'
+import React from "react";
 
 interface StepsVisualizerProps {
     trace: CpuSnapshot[]
@@ -17,19 +18,40 @@ function StepsVisualizer({ trace }: StepsVisualizerProps) {
 
     return (
         <div className="step-visualizer">
-            <div>Instruction: 0x{current.instruction.toString(16)}</div>
-            <div>Instruction-binary: {current.instruction.toString(2).padStart(32, '0')}</div>
-            <div>PC: 0x{current.pc.toString(16)}</div>
-            <div>ALU Result: {current.aluResult}</div>
-            <div>Registers: {current.registers.map((val, i) => `x${i}=${val}`).join(' ')}</div>
+            <div className={"general"}>
+                <div className={"step-counter"}>
+                    <button className={"button-left"} disabled={index === 0} onClick={() => setIndex(i => i - 1)}>
+                        Back
+                    </button>
+                    <span className={"step"}>{index + 1} / {trace.length}</span>
+                    <button className={"button-right"} disabled={index === trace.length - 1} onClick={() => setIndex(i => i + 1)}>
+                        Next
+                    </button>
+                </div>
 
-            <button disabled={index === 0} onClick={() => setIndex(i => i - 1)}>
-                ← Back
-            </button>
-            <span> Step {index + 1} / {trace.length} </span>
-            <button disabled={index === trace.length - 1} onClick={() => setIndex(i => i + 1)}>
-                Next →
-            </button>
+                <div className={"general-output"}>
+                    <div>Instruction-binary: {current.instruction.toString(2).padStart(32, '0')}</div>
+                    <div>Instruction-hexadecimal: 0x{current.instruction.toString(16)}</div>
+                    <div>PC: 0x{current.pc.toString(16)}</div>
+                    <div>ALU Result: {current.aluResult}</div>
+                </div>
+            </div>
+
+            <div className="registers">
+                {current.registers.map((val, i) => (
+                    <React.Fragment key={i}>
+                        {i <= 9 ? (
+                            <div className="register register-single-digit">
+                                x{i} = {val}
+                            </div>
+                        ) : (
+                            <div className="register">
+                                x{i} = {val}
+                            </div>
+                        )}
+                    </React.Fragment>
+                ))}
+            </div>
         </div>
     )
 }

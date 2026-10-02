@@ -7,16 +7,16 @@
 
 /* code input text field */
 .code-input {
-    min-height: 50rem;
+    min-height: 60rem;
     padding: 1rem;
     border: 1px solid #ddd;
     border-radius: 0.5rem;
     background-color: #fafafa;
     color: inherit;
-    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
-    font-size: 1.5rem;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 1.7rem;
     line-height: 1.5;
-    resize: vertical;
+    resize: none;
 }
 
 .code-input:focus {

@@ -18,9 +18,9 @@ public class SimulationController {
         instructions[3] = (byte) 0b00000000;
 
         instructions[4] = (byte) 0b10010011;
-        instructions[5] = (byte) 0b00000000;
-        instructions[6] = (byte) 0b01010000;
-        instructions[7] = (byte) 0b00000000;
+        instructions[5] = (byte) 0b00110000;
+        instructions[6] = (byte) 0b11111100;
+        instructions[7] = (byte) 0b01111111;
 
         SingleCycleProcessor processor = new SingleCycleProcessor(instructions, 1024);
         return processor.simulate();
