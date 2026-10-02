@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class InstructionLoaderTest {
 
     private static ProgramData load(String... lines) {
-        return new InstructionLoader(lines).getObjects();
+        return new InstructionLoader().getObjects();
     }
 
     private static List<Integer> assemble(String... lines) {
