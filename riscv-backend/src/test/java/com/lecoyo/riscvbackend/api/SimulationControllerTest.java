@@ -231,6 +231,15 @@ class SimulationServiceTest {
     }
 
     @Test
+    void auipc_withNonZeroPc() {
+        int[] regs = run("""
+        addi x5, x0, 0
+        auipc x1, 1
+        """);
+        assertEquals(0x1004, regs[1]);
+    }
+
+    @Test
     void sw_then_lw() {
         int[] regs = run("""
             addi x1, x0, 42

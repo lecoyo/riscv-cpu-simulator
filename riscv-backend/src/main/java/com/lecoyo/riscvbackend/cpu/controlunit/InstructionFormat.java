@@ -7,6 +7,5 @@ public enum InstructionFormat {
     J_TYPE,
     R_TYPE,
     S_TYPE,
-    U_TYPE_LUI,
-    U_TYPE_AUIPC
+    U_TYPE
 }

@@ -22,6 +22,8 @@ public class SingleCycleProcessor {
 
     private static final int OPCODE_JAL = 0b1101111;
     private static final int OPCODE_JALR = 0b1100111;
+    private static final int OPCODE_LUI = 0b0110111;
+    private static final int OPCODE_AUIPC = 0b0010111;
 
     // program counter as byte address
     private int pc = 0;
@@ -132,15 +134,21 @@ public class SingleCycleProcessor {
 
     /**
      * Reads the registers, extends the immediate and computes the ALU result.
+     * The first ALU operand is the value of {@code rs1}, except for {@code lui} (constant 0)
+     * and {@code auipc} (the current pc).
      *
      * @param decodeResult the decoded instruction fields
      * @param controlSignals the control signals of the instruction
-     * @return the ALU result, the second register value and the extended Immediate
+     * @return the ALU result, the second register value and the extended immediate
      */
     private ExecuteResult execute(DecodeResult decodeResult, ControlSignals controlSignals) {
         // Register file
         int[] rd = registerFile.read(decodeResult.rs1(), decodeResult.rs2());
-        int rd1 = rd[0];
+        int rd1 = switch (decodeResult.op()) {
+            case OPCODE_LUI -> 0;
+            case OPCODE_AUIPC -> pc;
+            default -> rd[0];
+        };
         int rd2 = rd[1];
 
         // Extend
