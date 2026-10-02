@@ -121,10 +121,16 @@ public class InstructionParser {
                 byte rs1;
                 int imm;
 
-                if (args.opcode == 0b0000011 || args.opcode == 0b1100111) {
-                    imm = Integer.decode(arguments[2]);
+                if (args.opcode == 0b0000011) {
                     rs1 = reg(arguments[3]);
-                } else {
+                    imm = Integer.decode(arguments[2]);
+                }
+                else if (args.opcode == 0b1100111){
+                    rs1 = reg(arguments[2]);
+                    imm = isNumber(arguments[3]) ? Integer.decode(arguments[3])
+                            : labels.get(arguments[3]);
+                }
+                else {
                     rs1 = reg(arguments[2]);
                     imm = Integer.decode(arguments[3]);
                 }
@@ -253,6 +259,10 @@ public class InstructionParser {
             throw new IllegalArgumentException(mnemonic + ": offset " + offset
                     + " out of range or not 2-byte aligned");
         }
+    }
+
+    private boolean isNumber(String str) {
+        return str.matches("[0-9]+");
     }
 
     private int opLengthByType(InstType type) {
