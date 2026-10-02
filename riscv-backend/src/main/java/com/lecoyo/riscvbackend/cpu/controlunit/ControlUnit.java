@@ -26,10 +26,9 @@ public class ControlUnit {
         // replace aluOp with aluControl
         controlSignals.aluControl = aluControl.decode(controlSignals.getAluControl(), funct3, funct7);
 
-        // TODO J-Type instructions may not function correctly because of wb of pc + 4
         // TODO B-Type instructions may not function correctly because of missing zero flag implementation
 
-        // TODO LUI, AUIPC, JALR instructions need more signals to work properly
+        // TODO LUI, AUIPC instructions need more signals to work properly
         return controlSignals;
     }
 }

@@ -88,7 +88,7 @@ public class SingleCycleProcessor {
         );
 
         ExecuteResult executeResult = execute(decodeResult, controlSignals);
-        int readData = memory(executeResult, controlSignals);
+        int readData = memory(decodeResult, executeResult, controlSignals);
         writeBack(readData, decodeResult, executeResult, controlSignals);
         pcUpdate(decodeResult, executeResult, controlSignals);
 
@@ -154,18 +154,41 @@ public class SingleCycleProcessor {
     }
 
     /**
-     * Accesses the data memory.
-     * The memory is only accessed if the instruction is a load ({@code resultSrc}) or a store ({@code memWrite}).
-     * For all other instructions, the ALU result is not a memory address, so no access takes place.
+     * Accesses the data memory (load or store).
+     * The memory is only accessed for loads ({@code resultSrc}) and stores ({@code memWrite}).
+     * Stores of a byte or halfword (sb, sh) only replace the lowest bytes of the addressed word.
+     * Loads are narrowed according to {@code funct3} and sign- or zero-extended (lb, lh, lw, lbu, lhu).
      *
+     * @param decodeResult the decoded instruction fields
      * @param executeResult the result of the execute stage
      * @param controlSignals the control signals of the instruction
      * @return the data read from memory, or {@code 0} if the instruction is a store or does not access memory
      */
-    private int memory(ExecuteResult executeResult, ControlSignals controlSignals) {
+    private int memory(DecodeResult decodeResult, ExecuteResult executeResult, ControlSignals controlSignals) {
         if (!controlSignals.isMemWrite() && !controlSignals.isResultSrc()) return 0;
 
-        return dataMemory.operate(executeResult.aluResult(), executeResult.rd2(), controlSignals.isMemWrite());
+        int address = executeResult.aluResult();
+        int funct3 = decodeResult.funct3();
+        int word = dataMemory.operate(address, 0, false);
+
+        if (controlSignals.isMemWrite()) {
+            int value = executeResult.rd2();
+            int merged = switch (funct3) {
+                case 0b000 -> (word & 0xFFFFFF00) | (value & 0xFF);
+                case 0b001 -> (word & 0xFFFF0000) | (value & 0xFFFF);
+                default -> value;
+            };
+            dataMemory.operate(address, merged, true);
+            return 0;
+        }
+
+        return switch (funct3) {
+            case 0b000 -> (byte) word;
+            case 0b001 -> (short) word;
+            case 0b100 -> word & 0xFF;
+            case 0b101 -> word & 0xFFFF;
+            default -> word;
+        };
     }
 
     /**
