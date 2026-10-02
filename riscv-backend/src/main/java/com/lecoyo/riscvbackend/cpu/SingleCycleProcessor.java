@@ -165,8 +165,13 @@ public class SingleCycleProcessor {
         return dataMemory.operate(executeResult.aluResult(), executeResult.rd2(), controlSignals.isMemWrite());
     }
 
+    private static final int OPCODE_JAL = 0b1101111;
+    private static final int OPCODE_JALR = 0b1100111;
+
     /**
-     * Selects between ALU result and memory data and writes it to the destination register.
+     * Selects the value to write back and writes it to the destination register.
+     * For {@code jal} and {@code jalr} the return address {@code pc + 4} is written,
+     * otherwise the value is selected between ALU result and memory data.
      *
      * @param readData the data read from data memory
      * @param decodeResult the decoded instruction fields
@@ -175,6 +180,11 @@ public class SingleCycleProcessor {
      */
     private void writeBack(int readData, DecodeResult decodeResult, ExecuteResult executeResult, ControlSignals controlSignals) {
         int result = Mux2.select(executeResult.aluResult(), readData, controlSignals.isResultSrc());
+
+        if (decodeResult.op() == OPCODE_JAL || decodeResult.op() == OPCODE_JALR) {
+            result = Adder.add(pc, 4);
+        }
+
         registerFile.write(decodeResult.rd(), result, controlSignals.isRegWrite());
     }
 

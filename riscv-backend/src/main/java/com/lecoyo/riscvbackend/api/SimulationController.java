@@ -1,6 +1,5 @@
 package com.lecoyo.riscvbackend.api;
 
-import com.lecoyo.riscvbackend.assembly.load.InstructionLoader;
 import com.lecoyo.riscvbackend.cpu.SingleCycleProcessor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,10 +13,7 @@ import java.util.List;
 public class SimulationController {
     @PostMapping("/simulate")
     public List<SingleCycleProcessor.CpuSnapshot> simulate(@RequestBody CodeRequest request) {
-        InstructionLoader loader = new InstructionLoader();
-        byte[] instructions = loader.getBinary(request.code());
-
-        SingleCycleProcessor processor = new SingleCycleProcessor(instructions, 2056);
-        return processor.simulate();
+        SimulationService simulationService = new SimulationService();
+        return simulationService.simulate(request.code());
     }
 }
