@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import type { CpuSnapshot } from "../types/types.ts";
+import {useState} from 'react'
+import type {CpuSnapshot} from "../types/types.ts";
 
 interface UseSimulationResult {
     trace: CpuSnapshot[]
@@ -26,7 +26,7 @@ export function useSimulation(): UseSimulationResult {
             })
 
             if (!res.ok) {
-                throw new Error(`Simulation failed: ${res.status}`)
+                throw new Error(`Simulation failed: ${await res.text()}`)
             }
 
             const data: CpuSnapshot[] = await res.json();
