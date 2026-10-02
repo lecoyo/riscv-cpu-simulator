@@ -412,23 +412,25 @@ class SimulationServiceTest {
     @Test
     void jal() {
         int[] regs = run("""
-            jal x1, 8
-            addi x2, x0, 999
-            addi x3, x0, 1
-            """);
-        assertEquals(0, regs[2]);
+        jal x1, 8
+        addi x5, x0, 999
+        addi x3, x0, 1
+        """);
+        assertEquals(0, regs[5]);
         assertEquals(1, regs[3]);
+        assertEquals(4, regs[1]);
     }
 
     @Test
     void jalr() {
         int[] regs = run("""
-            addi x5, x0, 12
-            jalr x1, x5, 0
-            addi x2, x0, 999
-            addi x3, x0, 1
-            """);
-        assertEquals(0, regs[2]);
+        addi x5, x0, 12
+        jalr x1, x5, 0
+        addi x6, x0, 999
+        addi x3, x0, 1
+        """);
+        assertEquals(0, regs[6]);
         assertEquals(1, regs[3]);
+        assertEquals(8, regs[1]);
     }
 }
