@@ -1,20 +1,21 @@
 package com.lecoyo.riscvbackend.assembly.load;
 
 import com.lecoyo.riscvbackend.assembly.Instruction;
-import com.lecoyo.riscvbackend.assembly.ProgramData;import lombok.AllArgsConstructor;
+import com.lecoyo.riscvbackend.assembly.ProgramData;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-@AllArgsConstructor
+@NoArgsConstructor
 public class InstructionLoader {
     private String[] mnemonics;
 
-    public List<Integer> getBinary(String code) {
+    public byte[] getBinary(String code) {
         mnemonics = splitLines(code);
         ProgramData program = getObjects();
-        return InstructionEncoder.encode(program.getInstructions());
+        return intListToByteArray(InstructionEncoder.encode(program.getInstructions()));
     }
 
     /**
@@ -60,7 +61,7 @@ public class InstructionLoader {
         return new ProgramData(instructions, labels);
     }
 
-    public String[] splitLines(String code) {
+    public static String[] splitLines(String code) {
         return code.split("\\R");
     }
 
@@ -78,5 +79,20 @@ public class InstructionLoader {
         }
 
         return line.trim();
+    }
+
+    private byte[] intListToByteArray(List<Integer> values) {
+        byte[] bytes = new byte[values.size() * 4];
+
+        for (int i = 0; i < values.size(); i++) {
+            int value = values.get(i);
+
+            bytes[i * 4]     = (byte) value;
+            bytes[i * 4 + 1] = (byte) (value >> 8);
+            bytes[i * 4 + 2] = (byte) (value >> 16);
+            bytes[i * 4 + 3] = (byte) (value >> 24);
+        }
+
+        return bytes;
     }
 }
