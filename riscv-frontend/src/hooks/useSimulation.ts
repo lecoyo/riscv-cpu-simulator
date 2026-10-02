@@ -26,7 +26,7 @@ export function useSimulation(): UseSimulationResult {
             })
 
             if (!res.ok) {
-                throw new Error(`Simulation failed: ${await res.text()}`)
+                throw new Error(`Error: ${await res.text()}`)
             }
 
             const data: CpuSnapshot[] = await res.json();
