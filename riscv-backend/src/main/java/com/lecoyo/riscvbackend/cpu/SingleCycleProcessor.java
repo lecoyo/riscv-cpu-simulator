@@ -47,6 +47,7 @@ public class SingleCycleProcessor {
         this.dataMemory = new DataMemory(memorySize);
         this.controlUnit = new ControlUnit(new MainControlUnit(), new ALUControl());
         this.registerFile = new RegisterFile();
+        this.registerFile.write(2, memorySize/2, true);
         this.extend = new Extend();
         this.alu = new ALU();
     }

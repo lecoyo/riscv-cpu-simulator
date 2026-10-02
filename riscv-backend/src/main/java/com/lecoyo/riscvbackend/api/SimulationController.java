@@ -17,7 +17,7 @@ public class SimulationController {
         InstructionLoader loader = new InstructionLoader();
         byte[] instructions = loader.getBinary(request.code());
 
-        SingleCycleProcessor processor = new SingleCycleProcessor(instructions, 1024);
+        SingleCycleProcessor processor = new SingleCycleProcessor(instructions, 2056);
         return processor.simulate();
     }
 }
