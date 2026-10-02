@@ -20,7 +20,11 @@ public class IType extends Instruction {
     }
 
     @Override
-    protected int assemble(String mnemonic) {
-        return 0;
+    protected int assemble() {
+        return (opcode & 0x7F)
+                | (getRd() & 0x1F) << 7
+                | (getFunct3() & 0x7) << 12
+                | (getRs1() & 0x1F) << 15
+                | (getImm() & 0xFFF) << 20;
     }
 }

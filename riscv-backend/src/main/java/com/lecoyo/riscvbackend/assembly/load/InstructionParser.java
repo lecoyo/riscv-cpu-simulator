@@ -163,7 +163,7 @@ public class InstructionParser {
                 byte imm2 = (byte) ((((offset >> 1) & 0xF) << 1)
                         |  ((offset >> 11) & 0x1));
 
-                return new BType(arguments[0], target, pc, imm1, (byte) args.funct3, rs1, rs2, imm2);
+                return new BType(arguments[0], (byte) args.opcode(), target, pc, imm1, (byte) args.funct3, rs1, rs2, imm2);
             }
             case InstType.J: {
                 byte rd;

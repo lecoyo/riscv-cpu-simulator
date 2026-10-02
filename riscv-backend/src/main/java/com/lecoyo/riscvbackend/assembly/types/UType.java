@@ -17,7 +17,9 @@ public class UType extends Instruction {
     }
 
     @Override
-    protected int assemble(String mnemonic) {
-        return 0;
+    protected int assemble() {
+        return (opcode & 0x7F)
+                | ((rd & 0x1F) << 7)
+                | ((fullImmediate & 0xFFFFF) << 12);
     }
 }

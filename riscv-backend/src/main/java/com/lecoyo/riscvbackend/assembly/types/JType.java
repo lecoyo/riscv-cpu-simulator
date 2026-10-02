@@ -19,7 +19,12 @@ public class JType extends Instruction {
     }
 
     @Override
-    protected int assemble(String mnemonic) {
-        return 0;
+    protected int assemble() {
+        return (opcode & 0x7F)
+                | ((rd & 0x1F) << 7)
+                | (((imm >> 12) & 0xFF)  << 12)
+                | (((imm >> 11) & 0x1)   << 20)
+                | (((imm >> 1)  & 0x3FF) << 21)
+                | (((imm >> 20) & 0x1)   << 31);
     }
 }

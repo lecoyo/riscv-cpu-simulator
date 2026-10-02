@@ -7,11 +7,10 @@ package com.lecoyo.riscvbackend.assembly;
 public abstract class Instruction {
     public Byte opcode;
     public String mnemonic;
-    public Integer binary;
 
-    public final void encode() {
-        this.binary = assemble(mnemonic);
+    public final int encode() {
+        return assemble();
     }
 
-    protected abstract int assemble(String mnemonic);
+    protected abstract int assemble();
 }

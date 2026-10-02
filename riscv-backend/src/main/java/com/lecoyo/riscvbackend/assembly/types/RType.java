@@ -23,7 +23,12 @@ public class RType extends Instruction {
     }
 
     @Override
-    protected int assemble(String mnemonic) {
-        return 0;
+    protected int assemble() {
+        return (opcode & 0x7F)
+                | ((getRd() & 0x1F) << 7)
+                | ((getFunct3() & 0x7) << 12)
+                | ((getRs1() & 0x1F) << 15)
+                | ((getRs2() & 0x1F) << 20)
+                | ((getFunct7() & 0x7F) << 25);
     }
 }
