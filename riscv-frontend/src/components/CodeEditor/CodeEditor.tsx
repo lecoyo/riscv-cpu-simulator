@@ -2,17 +2,16 @@ import { useState } from 'react'
 import './CodeEditor.css'
 import play from '../../assets/play.svg'
 
-function CodeEditor() {
+interface CodeEditorProps {
+    onSubmit: (code: string) => void
+    loading: boolean
+}
+
+function CodeEditor({ onSubmit, loading }: CodeEditorProps) {
     const [text, setText] = useState('')
 
-    async function simulate() {
-        const res = await fetch('/api/simulate', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: text })
-            })
-        const data = await res.text();
-        console.log(data);
+    function handleSimulate() {
+        onSubmit(text)
     }
 
     return (
@@ -25,7 +24,10 @@ function CodeEditor() {
                 spellCheck={false}
                 rows={10}
             />
-            <button onClick={simulate}><img alt={"play-icon"} src={play} />Simulate</button>
+            <button onClick={handleSimulate} disabled={loading}>
+                <img alt={"play-icon"} src={play} />
+                {loading ? 'Simulating...' : 'Simulate'}
+            </button>
         </div>
     )
 }
