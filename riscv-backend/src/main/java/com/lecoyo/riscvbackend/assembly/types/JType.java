@@ -11,7 +11,8 @@ public class JType extends Instruction {
 
     private int fullImmediate;
 
-    public JType(byte opcode, byte rd, int imm) {
+    public JType(String mnemonic, byte opcode, byte rd, int imm) {
+        this.mnemonic = mnemonic;
         this.opcode = opcode;
         this.rd = rd;
         this.imm = imm;

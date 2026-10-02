@@ -13,8 +13,9 @@ public class SType extends Instruction {
 
     private short fullImmediate;
 
-    public SType(byte opcode, byte imm1, byte funct3, byte rs1, byte rs2, byte imm2)
+    public SType(String mnemonic, byte opcode, byte imm1, byte funct3, byte rs1, byte rs2, byte imm2)
     {
+        this.mnemonic = mnemonic;
         this.opcode = opcode;
         this.imm1 = imm1;
         this.funct3 = funct3;

@@ -137,12 +137,13 @@ public class InstructionParser {
                     throw new IllegalArgumentException(arguments[0] + ": immediate out of range: " + imm);
                 }
 
-                return new IType((byte) args.opcode, rd, (byte) args.funct3, rs1, (short) imm);
+                return new IType(arguments[0], (byte) args.opcode, rd, (byte) args.funct3, rs1, (short) imm);
             }
             case InstType.U: {
                 int imm = Integer.decode(arguments[2]);
                 if(imm < 0 || imm > 0xFFFFF) throw new IllegalArgumentException(arguments[0] + ": immediate out of range: " + imm);
                 return new UType(
+                        arguments[0],
                         (byte) args.opcode,
                         reg(arguments[1]),
                         imm
@@ -162,7 +163,7 @@ public class InstructionParser {
                 byte imm2 = (byte) ((((offset >> 1) & 0xF) << 1)
                         |  ((offset >> 11) & 0x1));
 
-                return new BType(target, pc, imm1, (byte) args.funct3, rs1, rs2, imm2);
+                return new BType(arguments[0], target, pc, imm1, (byte) args.funct3, rs1, rs2, imm2);
             }
             case InstType.J: {
                 byte rd;
@@ -177,10 +178,11 @@ public class InstructionParser {
                 int offset = resolveTarget(targetArg, pc) - pc;
                 checkOffset(offset, 21, arguments[0]);
 
-                return new JType((byte) args.opcode, rd, offset);
+                return new JType(arguments[0], (byte) args.opcode, rd, offset);
             }
             case InstType.R: {
                 return new RType(
+                        arguments[0],
                         (byte) args.opcode,
                         reg(arguments[1]),
                         (byte) args.funct3,
@@ -195,6 +197,7 @@ public class InstructionParser {
                     throw new IllegalArgumentException(arguments[0] + ": immediate out of range: " + imm);
 
                 return new SType(
+                        arguments[0],
                         (byte) args.opcode,
                         (byte) (imm & 0x1F),
                         (byte) args.funct3,
@@ -217,6 +220,10 @@ public class InstructionParser {
     public String[] clean(String instruction) {
         instruction = instruction.replaceAll("[+^:,()]", " ");
         return instruction.trim().split("\\s+");
+    }
+
+    public static InstType getType(Instruction inst) {
+        return INSTMAP.get(inst.mnemonic).type();
     }
 
     public static boolean isLabel(String line) {

@@ -9,7 +9,8 @@ public class UType extends Instruction {
     private byte rd;
     private int fullImmediate;
 
-    public UType(byte opcode, byte rd, int fullImmediate) {
+    public UType(String mnemonic, byte opcode, byte rd, int fullImmediate) {
+        this.mnemonic = mnemonic;
         this.opcode = opcode;
         this.rd = rd;
         this.fullImmediate = fullImmediate;

@@ -10,7 +10,8 @@ public class IType extends Instruction {
     private byte rs1;
     private short imm;
 
-    public IType(byte opcode, byte rd, byte funct3, byte rs1, short imm) {
+    public IType(String mnemonic, byte opcode, byte rd, byte funct3, byte rs1, short imm) {
+        this.mnemonic = mnemonic;
         this.opcode = opcode;
         this.rd = rd;
         this.funct3 = funct3;

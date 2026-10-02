@@ -14,8 +14,9 @@ public class BType extends Instruction {
     private int branchOffset;
     private int fullImmediate;
 
-    public BType(int labelValue, int pc, byte imm1, byte funct3, byte rs1, byte rs2, byte imm2) {
+    public BType(String mnemonic, int labelValue, int pc, byte imm1, byte funct3, byte rs1, byte rs2, byte imm2) {
         // TODO
+        this.mnemonic = mnemonic;
         branchOffset = labelValue - pc;
         this.imm1 = imm1;
         this.funct3 = funct3;

@@ -11,7 +11,9 @@ public class RType extends Instruction {
     private final byte rs2;
     private final byte funct7;
 
-    public RType(byte opcode, byte rd, byte funct3, byte rs1, byte rs2, byte funct7) {
+    public RType(String mnemonic, byte opcode, byte rd, byte funct3, byte rs1, byte rs2, byte funct7) {
+
+        this.mnemonic = mnemonic;
         this.opcode = opcode;
         this.rd = rd;
         this.funct3 = funct3;
