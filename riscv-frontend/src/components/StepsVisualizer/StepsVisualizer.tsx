@@ -1,7 +1,6 @@
 import './StepsVisualizer.css'
-import type { CpuSnapshot } from '../../types/types.ts'
-import { useState } from 'react'
-import React from "react";
+import type {CpuSnapshot} from '../../types/types.ts'
+import React, {useState} from 'react'
 
 interface StepsVisualizerProps {
     trace: CpuSnapshot[]
@@ -28,10 +27,17 @@ function StepsVisualizer({ trace }: StepsVisualizerProps) {
                         Next
                     </button>
                 </div>
-
                 <div className={"general-output"}>
-                    <div>Instruction-binary: {current.instruction.toString(2).padStart(32, '0')}</div>
-                    <div>Instruction-hexadecimal: 0x{current.instruction.toString(16)}</div>
+                    <div>
+                        Instruction-binary: {
+                        (current.instruction >>> 0).toString(2).padStart(32, '0')
+                    }
+                    </div>
+                    <div>
+                        Instruction-hexadecimal: 0x{
+                        (current.instruction >>> 0).toString(16).padStart(8, '0')
+                    }
+                    </div>
                     <div>PC: 0x{current.pc.toString(16)}</div>
                     <div>ALU Result: {current.aluResult}</div>
                 </div>
