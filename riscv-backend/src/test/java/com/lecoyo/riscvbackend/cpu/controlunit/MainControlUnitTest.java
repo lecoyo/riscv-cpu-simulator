@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class MainControlUnitTest {
-    private final MainControlUnit mainControlUnit = new MainControlUnit();
+    private final com.lecoyo.riscvbackend.cpu.controlunit.MainControlUnit mainControlUnit = new MainControlUnit();
 
     @Test
     void rType_add() {

@@ -1,10 +1,12 @@
 package com.lecoyo.riscvbackend.cpu.components;
 
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ExtendTest {
-    private final Extend extend = new Extend();
+    private final com.lecoyo.riscvbackend.cpu.components.Extend extend = new Extend();
 
     private int possibleImmediate(int instruction) {
         return instruction >>> 7;

@@ -43,6 +43,7 @@ public class InstructionLoader {
         // map instructions
         for (String mnemonic : mnemonics) {
             String line = mnemonic.trim();
+            line = clean(line);
             if (line.isEmpty() || InstructionParser.isLabel(line)) continue;
 
             Instruction instruction = parser.parse(pc, line);
