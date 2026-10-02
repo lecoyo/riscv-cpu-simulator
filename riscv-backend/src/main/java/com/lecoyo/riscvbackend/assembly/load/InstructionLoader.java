@@ -11,6 +11,12 @@ import java.util.List;
 public class InstructionLoader {
     private String[] mnemonics;
 
+    public List<Integer> getBinary(String code) {
+        mnemonics = splitLines(code);
+        ProgramData program = getObjects();
+        return InstructionEncoder.encode(program.getInstructions());
+    }
+
     /**
      * Iterates through loaded string array <code>mnemonics</code> and returns a ProgramData object with all instruction
      * objects and labels.
@@ -52,6 +58,10 @@ public class InstructionLoader {
         }
 
         return new ProgramData(instructions, labels);
+    }
+
+    public String[] splitLines(String code) {
+        return code.split("\\R");
     }
 
     /**
