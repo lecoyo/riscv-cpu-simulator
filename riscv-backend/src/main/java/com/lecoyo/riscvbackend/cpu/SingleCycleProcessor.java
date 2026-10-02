@@ -20,6 +20,9 @@ public class SingleCycleProcessor {
     private final Extend extend;
     private final ALU alu;
 
+    private static final int OPCODE_JAL = 0b1101111;
+    private static final int OPCODE_JALR = 0b1100111;
+
     // program counter as byte address
     private int pc = 0;
 
@@ -87,7 +90,7 @@ public class SingleCycleProcessor {
         ExecuteResult executeResult = execute(decodeResult, controlSignals);
         int readData = memory(executeResult, controlSignals);
         writeBack(readData, decodeResult, executeResult, controlSignals);
-        pcUpdate(executeResult, controlSignals);
+        pcUpdate(decodeResult, executeResult, controlSignals);
 
         return new CpuSnapshot(
                 pcBefore,
@@ -165,9 +168,6 @@ public class SingleCycleProcessor {
         return dataMemory.operate(executeResult.aluResult(), executeResult.rd2(), controlSignals.isMemWrite());
     }
 
-    private static final int OPCODE_JAL = 0b1101111;
-    private static final int OPCODE_JALR = 0b1100111;
-
     /**
      * Selects the value to write back and writes it to the destination register.
      * For {@code jal} and {@code jalr} the return address {@code pc + 4} is written,
@@ -190,14 +190,22 @@ public class SingleCycleProcessor {
 
     /**
      * Sets the pc to either {@code pc + 4} or the branch/jump target.
+     * For {@code jalr} the target is the ALU result ({@code rs1 + imm}) with the lowest bit cleared
+     * and the jump is always taken.
+     * For {@code jal} and branches the target is {@code pc + imm}.
      *
+     * @param decodeResult the decoded instruction fields
      * @param executeResult the result of the execute stage
      * @param controlSignals the control signals of the instruction
      */
-    private void pcUpdate(ExecuteResult executeResult, ControlSignals controlSignals) {
-        int pcTarget = Adder.add(pc, executeResult.immExt());
+    private void pcUpdate(DecodeResult decodeResult, ExecuteResult executeResult, ControlSignals controlSignals) {
+        boolean isJalr = decodeResult.op() == OPCODE_JALR;
+
+        int pcTarget = isJalr
+                ? executeResult.aluResult() & ~1
+                : Adder.add(pc, executeResult.immExt());
         int pcPlus4 = Adder.add(pc, 4);
 
-        pc = Mux2.select(pcPlus4, pcTarget, controlSignals.isPcSrc());
+        pc = Mux2.select(pcPlus4, pcTarget, isJalr || controlSignals.isPcSrc());
     }
 }
