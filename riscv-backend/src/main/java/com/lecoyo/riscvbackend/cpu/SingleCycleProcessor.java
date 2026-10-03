@@ -26,6 +26,8 @@ public class SingleCycleProcessor {
     private static final int OPCODE_AUIPC = 0b0010111;
     private static final int OPCODE_B_TYPE = 0b1100011;
 
+    private static final int MAX_CYCLES = 10000;
+
     // program counter as byte address
     private int pc = 0;
 
@@ -65,9 +67,13 @@ public class SingleCycleProcessor {
      */
     public List<CpuSnapshot> simulate() {
         List<CpuSnapshot> trace = new ArrayList<>();
+        int cycles = 0;
 
         while (pc < instructionMemory.getProgramSize()) {
+            if(cycles > MAX_CYCLES)
+                throw new IllegalArgumentException("Too many cycles, simulation stopped.");
             trace.add(step());
+            cycles += 1;
         }
 
         return trace;
