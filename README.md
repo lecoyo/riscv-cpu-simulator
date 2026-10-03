@@ -5,6 +5,12 @@
 A web-based RISC-V (RV32I) simulator. Write assembly code in the browser, and a backend service assembles it and runs it on a simulated **single-cycle processor**. The execution is returned as a step-by-step trace, so you can see the state of the CPU after every instruction.
 The processor design is based on the single-cycle RISC-V microarchitecture from *Digital Design and Computer Architecture: RISC-V Edition* by Sarah L. Harris and David Harris.
 
+## Live Demo
+
+**[Try the simulator here](https://riscv-cpu-simulator.onrender.com)**
+
+> The demo runs on a free hosting tier. If nobody has used it for a while, the first load can take up to a minute while the server wakes up.
+
 ## Features
 
 - Assembler for a subset of RV32I (see below)
