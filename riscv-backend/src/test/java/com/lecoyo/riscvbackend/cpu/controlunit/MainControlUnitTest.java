@@ -8,7 +8,7 @@ class MainControlUnitTest {
 
     @Test
     void rType_add() {
-        ControlSignals cs = mainControlUnit.decode((byte) 0b0110011);
+        ControlSignals cs = mainControlUnit.decode((byte) 0b0110011, false);
         assertTrue(cs.isRegWrite());
         assertFalse(cs.isAluSrc());
         assertFalse(cs.isMemWrite());
@@ -17,7 +17,7 @@ class MainControlUnitTest {
 
     @Test
     void iTypeLoad() {
-        ControlSignals cs = mainControlUnit.decode((byte) 0b0000011);
+        ControlSignals cs = mainControlUnit.decode((byte) 0b0000011, false);
         assertTrue(cs.isRegWrite());
         assertTrue(cs.isAluSrc());
         assertTrue(cs.isResultSrc());
@@ -26,7 +26,7 @@ class MainControlUnitTest {
 
     @Test
     void sType() {
-        ControlSignals cs = mainControlUnit.decode((byte) 0b0100011);
+        ControlSignals cs = mainControlUnit.decode((byte) 0b0100011, false);
         assertFalse(cs.isRegWrite());
         assertTrue(cs.isMemWrite());
         assertTrue(cs.isAluSrc());
@@ -35,6 +35,6 @@ class MainControlUnitTest {
     @Test
     void unknownOpcode_throws() {
         assertThrows(IllegalArgumentException.class,
-                () -> mainControlUnit.decode((byte) 0b1111111));
+                () -> mainControlUnit.decode((byte) 0b1111111, false));
     }
 }

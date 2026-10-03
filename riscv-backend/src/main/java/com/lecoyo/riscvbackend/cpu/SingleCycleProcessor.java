@@ -24,12 +24,13 @@ public class SingleCycleProcessor {
     private static final int OPCODE_JALR = 0b1100111;
     private static final int OPCODE_LUI = 0b0110111;
     private static final int OPCODE_AUIPC = 0b0010111;
+    private static final int OPCODE_B_TYPE = 0b1100011;
 
     // program counter as byte address
     private int pc = 0;
 
     private record DecodeResult(byte op, byte rd, byte funct3, byte rs1, byte rs2, byte funct7, int rawImmediate) {}
-    private record ExecuteResult(int aluResult, int rd2, int immExt) {}
+    private record ExecuteResult(int aluResult, int rd1, int rd2, int immExt) {}
 
     public record CpuSnapshot(
             int pc,
@@ -74,6 +75,8 @@ public class SingleCycleProcessor {
 
     /**
      * Executes one instruction and returns the resulting snapshot.
+     * For branch instructions the control signals are resolved twice: first without a branch decision
+     * to run the execute stage, then again with the evaluated branch condition so that {@code pcSrc} is set correctly.
      *
      * @return the snapshot after this instruction
      */
@@ -86,10 +89,20 @@ public class SingleCycleProcessor {
                 decodeResult.op(),
                 decodeResult.funct3(),
                 decodeResult.funct7(),
-                false //TODO zero flag
+                false
         );
 
         ExecuteResult executeResult = execute(decodeResult, controlSignals);
+
+        if (decodeResult.op() == OPCODE_B_TYPE) {
+            controlSignals = controlUnit.operate(
+                    decodeResult.op(),
+                    decodeResult.funct3(),
+                    decodeResult.funct7(),
+                    isZeroFlag(executeResult, decodeResult)
+            );
+        }
+
         int readData = memory(decodeResult, executeResult, controlSignals);
         writeBack(readData, decodeResult, executeResult, controlSignals);
         pcUpdate(decodeResult, executeResult, controlSignals);
@@ -103,6 +116,29 @@ public class SingleCycleProcessor {
                 executeResult.immExt(),
                 controlSignals.isMemWrite()
         );
+    }
+
+    /**
+     * Evaluates the branch condition of a B-type instruction by comparing the two source register values.
+     *
+     * @param executeResult the result of the execute stage, providing the register values
+     * @param decodeResult the decoded instruction fields, providing {@code funct3} to select the comparison
+     * @return {@code true} if the according branch condition is met
+     * @throws IllegalArgumentException if {@code funct3} does not match a known branch instruction
+     */
+    private boolean isZeroFlag(ExecuteResult executeResult, DecodeResult decodeResult) {
+        int rd1 = executeResult.rd1();
+        int rd2 = executeResult.rd2();
+
+        return switch (decodeResult.funct3()) {
+            case 0b000 -> rd1 == rd2; // BEQ
+            case 0b001 -> rd1 != rd2; // BNE
+            case 0b100 -> rd1 < rd2; // BLT
+            case 0b101 -> rd1 >= rd2; // BGE
+            case 0b110 -> Integer.compareUnsigned(rd1, rd2) < 0; // BLTU
+            case 0b111 -> Integer.compareUnsigned(rd1, rd2) >= 0; // BGEU
+            default -> throw new IllegalArgumentException("Unknown funct3 for B-Type: " + decodeResult.funct3());
+        };
     }
 
     /**
@@ -158,7 +194,7 @@ public class SingleCycleProcessor {
         int aluSrcB = Mux2.select(rd2, immExt, controlSignals.isAluSrc());
         int aluResult = alu.operate(rd1, aluSrcB, controlSignals.getAluControl());
 
-        return new ExecuteResult(aluResult, rd2, immExt);
+        return new ExecuteResult(aluResult, rd1, rd2, immExt);
     }
 
     /**

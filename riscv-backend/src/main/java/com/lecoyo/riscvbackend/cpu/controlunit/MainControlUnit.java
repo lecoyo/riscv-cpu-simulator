@@ -6,13 +6,15 @@ import lombok.NoArgsConstructor;
 public class MainControlUnit {
     /**
      * Decodes the instruction opcode into its control signals.
+     * For branch instructions, {@code pcSrc} is set to {@code branchTaken}. For jumps, it is always set.
      *
      * @param op the 7-bit opcode of the instruction
+     * @param branchTaken {@code true} if the branch condition of a B-type instruction is met
      * @return the control signals for this instruction, with {@code aluControl}
      *         holding the intermediate {@code ALUOp} rather than the final ALU code
      * @throws IllegalArgumentException if {@code op} does not match a known instruction format
      */
-    public ControlSignals decode(byte op) {
+    public ControlSignals decode(byte op, boolean branchTaken) {
         InstructionFormat instructionFormat = decodeTypes(op);
 
         return switch (instructionFormat) {
@@ -21,7 +23,7 @@ public class MainControlUnit {
             case U_TYPE -> new ControlSignals(false, false, false, true, true, (byte) 0b00, (byte) 0b100);
             case S_TYPE -> new ControlSignals(false, false, true, true, false, (byte) 0b00, (byte) 0b001);
             case R_TYPE -> new ControlSignals(false, false, false, false, true, (byte) 0b10, (byte) 0b000);
-            case B_TYPE -> new ControlSignals(false, false, false, false, false, (byte) 0b01, (byte) 0b010);
+            case B_TYPE -> new ControlSignals(branchTaken, false, false, false, false, (byte) 0b01, (byte) 0b010);
             case J_TYPE -> new ControlSignals(true, false, false, false, true, (byte) 0b00, (byte) 0b011);
         };
     }

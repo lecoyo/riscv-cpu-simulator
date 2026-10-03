@@ -12,23 +12,20 @@ public class ControlUnit {
      * the coarse decoding of {@link MainControlUnit} with the ALU operation
      * decoding of {@link ALUControl}.
      *
-     * @param op     the 7-bit opcode of the instruction
+     * @param op the 7-bit opcode of the instruction
      * @param funct3 the 3-bit funct3 field
      * @param funct7 the 7-bit funct7 field
-     * @param zero   the ALU's zero flag, used to resolve branch instructions
+     * @param zero {@code true} if the branch condition of a B-type instruction is met, used to resolve branch instructions
      * @return the resolved control signals for this instruction
      * @throws IllegalArgumentException if {@code op} or {@code funct3} does not match a known instruction format
      */
     public ControlSignals operate(byte op, byte funct3, byte funct7, boolean zero) {
         // get controlSignals with aluOp stored in aluControl
-        ControlSignals controlSignals = mainControlUnit.decode(op);
+        ControlSignals controlSignals = mainControlUnit.decode(op, zero);
 
         // replace aluOp with aluControl
         controlSignals.aluControl = aluControl.decode(controlSignals.getAluControl(), funct3, funct7);
 
-        // TODO B-Type instructions may not function correctly because of missing zero flag implementation
-
-        // TODO LUI, AUIPC instructions need more signals to work properly
         return controlSignals;
     }
 }
