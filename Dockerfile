@@ -3,7 +3,7 @@ WORKDIR /app
 COPY riscv-frontend/ .
 RUN npm ci && npm run build
 
-FROM eclipse-temurin:21-jdk AS backend
+FROM eclipse-temurin:25-jdk AS backend
 WORKDIR /app
 COPY riscv-backend/ .
 COPY --from=frontend /app/dist src/main/resources/static
