@@ -1,6 +1,8 @@
 import './StepsVisualizer.css'
 import type {CpuSnapshot} from '../../types/types.ts'
 import React, {useState} from 'react'
+import skipB from '../../assets/skip-backward.svg'
+import skipF from '../../assets/skip-forward.svg'
 
 interface StepsVisualizerProps {
     trace: CpuSnapshot[]
@@ -19,12 +21,20 @@ function StepsVisualizer({ trace }: StepsVisualizerProps) {
         <div className="step-visualizer">
             <div className={"general"}>
                 <div className={"step-counter"}>
-                    <button className={"button-left"} disabled={index === 0} onClick={() => setIndex(i => i - 1)}>
-                        Back
+                    <button className={"step-counter-outer skip-right"} disabled={index === 0} onClick={() => setIndex(0)}>
+                        <img alt={"skipB"} src={skipB} />
                     </button>
-                    <span className={"step"}>{index + 1} / {trace.length}</span>
-                    <button className={"button-right"} disabled={index === trace.length - 1} onClick={() => setIndex(i => i + 1)}>
-                        Next
+                    <div className={"step-counter-inner"}>
+                        <button className={"button-left"} disabled={index === 0} onClick={() => setIndex(i => i - 1)}>
+                            Back
+                        </button>
+                        <span className={"step"}>{index + 1} / {trace.length}</span>
+                        <button className={"button-right"} disabled={index === trace.length - 1} onClick={() => setIndex(i => i + 1)}>
+                            Next
+                        </button>
+                    </div>
+                    <button className={"step-counter-outer skip-right"} disabled={index === trace.length - 1} onClick={() => setIndex(trace.length - 1)}>
+                        <img alt={"skipF"} src={skipF} />
                     </button>
                 </div>
                 <div className={"general-output"}>
