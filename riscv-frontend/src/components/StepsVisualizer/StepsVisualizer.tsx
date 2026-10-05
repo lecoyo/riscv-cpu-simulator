@@ -1,11 +1,11 @@
 import './StepsVisualizer.css'
-import type {CpuSnapshot} from '../../types/types.ts'
+import type {Package} from '../../types/types.ts'
 import skipB from '../../assets/skip-backward.svg'
 import skipF from '../../assets/skip-forward.svg'
 import React from "react"
 
 interface StepsVisualizerProps {
-    trace: CpuSnapshot[]
+    trace: Package[]
     index: number
     onIndexChange: (index: number) => void
 }
@@ -40,22 +40,27 @@ function StepsVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) 
 
                 <div className={"general-output"}>
                     <div>
-                        Instruction-binary: {
-                        (current.instruction >>> 0).toString(2).padStart(32, '0')
+                        Instruction: {
+                        (current.instructionString)
                     }
                     </div>
                     <div>
-                        Instruction-hexadecimal: 0x{
-                        (current.instruction >>> 0).toString(16).padStart(8, '0')
+                        Binary: {
+                        (current.cpuSnapshot.instruction >>> 0).toString(2).padStart(32, '0')
                     }
                     </div>
-                    <div>PC: 0x{current.pc.toString(16)}</div>
-                    <div>ALU Result: {current.aluResult}</div>
+                    <div>
+                        Hexadecimal: 0x{
+                        (current.cpuSnapshot.instruction >>> 0).toString(16).padStart(8, '0')
+                    }
+                    </div>
+                    <div>PC: 0x{current.cpuSnapshot.pc.toString(16)}</div>
+                    <div>ALU Result: {current.cpuSnapshot.aluResult}</div>
                 </div>
             </div>
 
             <div className="registers">
-                {current.registers.map((val, i) => (
+                {current.cpuSnapshot.registers.map((val, i) => (
                     <React.Fragment key={i}>
                         {i <= 9 ? (
                             <div className="register register-single-digit">

@@ -1,15 +1,15 @@
 import {useState} from 'react'
-import type {CpuSnapshot} from "../types/types.ts";
+import type {Package} from "../types/types.ts";
 
 interface UseSimulationResult {
-    trace: CpuSnapshot[]
+    trace: Package[]
     loading: boolean
     error: string | null
     simulate: (code: string) => Promise<void>
 }
 
 export function useSimulation(): UseSimulationResult {
-    const [trace, setTrace] = useState<CpuSnapshot[]>([])
+    const [trace, setTrace] = useState<Package[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -27,7 +27,7 @@ export function useSimulation(): UseSimulationResult {
                 throw new Error(`Error: ${await res.text()}`)
             }
 
-            const data: CpuSnapshot[] = await res.json();
+            const data: Package[] = await res.json();
             setTrace(data)
         } catch (e) {
             setError(e instanceof Error ? e.message : 'Unknown error')

@@ -8,8 +8,6 @@ function Home() {
     const { trace, loading, error, simulate } = useSimulation()
     const [currentIndex, setCurrentIndex] = useState(0)
 
-    const currentSnapshot = trace[currentIndex]
-
     async function handleSubmit(code: string) {
         await simulate(code)
         setCurrentIndex(0)
@@ -17,7 +15,7 @@ function Home() {
 
     return (
         <div className={"home"}>
-            <CodeEditor onSubmit={handleSubmit} loading={loading} currentPc={currentSnapshot?.pc}/>
+            <CodeEditor onSubmit={handleSubmit} loading={loading} />
             {error && <div className="error">{error}</div>}
             <StepsVisualizer trace={trace} index={currentIndex} onIndexChange={setCurrentIndex} />
         </div>

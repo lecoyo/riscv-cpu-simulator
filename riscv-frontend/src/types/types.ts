@@ -17,3 +17,8 @@ export interface CpuSnapshot {
     immExt: number
     memWrite: boolean
 }
+
+export interface Package {
+    cpuSnapshot: CpuSnapshot
+    instructionString: string
+}
