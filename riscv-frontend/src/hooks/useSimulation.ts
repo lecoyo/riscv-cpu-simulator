@@ -5,7 +5,6 @@ interface UseSimulationResult {
     trace: CpuSnapshot[]
     loading: boolean
     error: string | null
-    simulationId: number
     simulate: (code: string) => Promise<void>
 }
 
@@ -13,7 +12,6 @@ export function useSimulation(): UseSimulationResult {
     const [trace, setTrace] = useState<CpuSnapshot[]>([])
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-    const [simulationId, setSimulationId] = useState(0)
 
     async function simulate(code: string) {
         setLoading(true)
@@ -31,7 +29,6 @@ export function useSimulation(): UseSimulationResult {
 
             const data: CpuSnapshot[] = await res.json();
             setTrace(data)
-            setSimulationId(id => id + 1)
         } catch (e) {
             setError(e instanceof Error ? e.message : 'Unknown error')
             setTrace([])
@@ -40,5 +37,5 @@ export function useSimulation(): UseSimulationResult {
         }
     }
 
-    return { trace, loading, error, simulationId, simulate }
+    return { trace, loading, error, simulate }
 }

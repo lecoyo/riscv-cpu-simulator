@@ -1,16 +1,16 @@
 import './StepsVisualizer.css'
 import type {CpuSnapshot} from '../../types/types.ts'
-import React, {useState} from 'react'
 import skipB from '../../assets/skip-backward.svg'
 import skipF from '../../assets/skip-forward.svg'
+import React from "react"
 
 interface StepsVisualizerProps {
     trace: CpuSnapshot[]
+    index: number
+    onIndexChange: (index: number) => void
 }
 
-function StepsVisualizer({ trace }: StepsVisualizerProps) {
-    const [index, setIndex] = useState(0)
-
+function StepsVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
     if (trace.length === 0) {
         return <div className="step-visualizer">No program simulated yet.</div>
     }
@@ -21,22 +21,23 @@ function StepsVisualizer({ trace }: StepsVisualizerProps) {
         <div className="step-visualizer">
             <div className={"general"}>
                 <div className={"step-counter"}>
-                    <button className={"step-counter-outer skip-right"} disabled={index === 0} onClick={() => setIndex(0)}>
+                    <button className={"step-counter-outer skip-right"} disabled={index === 0} onClick={() => onIndexChange(0)}>
                         <img alt={"skipB"} src={skipB} />
                     </button>
                     <div className={"step-counter-inner"}>
-                        <button className={"button-left"} disabled={index === 0} onClick={() => setIndex(i => i - 1)}>
+                        <button className={"button-left"} disabled={index === 0} onClick={() => onIndexChange(index - 1)}>
                             Back
                         </button>
                         <span className={"step"}>{index + 1} / {trace.length}</span>
-                        <button className={"button-right"} disabled={index === trace.length - 1} onClick={() => setIndex(i => i + 1)}>
+                        <button className={"button-right"} disabled={index === trace.length - 1} onClick={() => onIndexChange(index + 1)}>
                             Next
                         </button>
                     </div>
-                    <button className={"step-counter-outer skip-right"} disabled={index === trace.length - 1} onClick={() => setIndex(trace.length - 1)}>
+                    <button className={"step-counter-outer skip-right"} disabled={index === trace.length - 1} onClick={() => onIndexChange(trace.length - 1)}>
                         <img alt={"skipF"} src={skipF} />
                     </button>
                 </div>
+
                 <div className={"general-output"}>
                     <div>
                         Instruction-binary: {

@@ -5,6 +5,7 @@ import play from '../../assets/play.svg'
 interface CodeEditorProps {
     onSubmit: (code: string) => void
     loading: boolean
+    currentPc?: number
 }
 
 function CodeEditor({ onSubmit, loading }: CodeEditorProps) {
