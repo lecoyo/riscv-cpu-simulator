@@ -4,7 +4,7 @@ import Footer from './components/Footer/Footer.tsx'
 import Home from './pages/Home/Home.tsx'
 import SingleCycle from './pages/SingleCycle.tsx'
 import MultiCycle from './pages/MultiCycle.tsx'
-import Pipelined from './pages/Pipelined.tsx'
+import Pipelined from './pages/Pipelined/Pipelined.tsx'
 import './App.css'
 
 function App() {

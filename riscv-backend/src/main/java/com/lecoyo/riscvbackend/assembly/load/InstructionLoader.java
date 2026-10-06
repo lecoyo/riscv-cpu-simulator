@@ -2,6 +2,7 @@ package com.lecoyo.riscvbackend.assembly.load;
 
 import com.lecoyo.riscvbackend.assembly.Instruction;
 import com.lecoyo.riscvbackend.assembly.ProgramData;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
@@ -16,6 +17,27 @@ public class InstructionLoader {
         mnemonics = splitLines(code);
         ProgramData program = getObjects();
         return intListToByteArray(InstructionEncoder.encode(program.getInstructions()));
+    }
+
+    public String[] getInstructionString(String code) {
+        String[] lines = splitLines(code);
+
+        int readIndex = 0;
+        int writeIndex = 0;
+        while(readIndex < lines.length) {
+            String cleanLine = clean(lines[readIndex]);
+
+            if (cleanLine.isBlank()) {
+                readIndex++;
+            }
+            else {
+                lines[writeIndex] = cleanLine;
+                readIndex++;
+                writeIndex++;
+            }
+        }
+
+        return lines;
     }
 
     /**

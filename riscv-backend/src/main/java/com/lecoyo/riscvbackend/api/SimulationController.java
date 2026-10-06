@@ -16,7 +16,7 @@ public class SimulationController {
     private final SimulationService simulationService;
 
     @PostMapping("/simulate")
-    public List<SingleCycleProcessor.CpuSnapshot> simulate(@RequestBody CodeRequest request) {
+    public List<Package> simulate(@RequestBody CodeRequest request) {
         return simulationService.simulate(request.code());
     }
 }

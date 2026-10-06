@@ -57,6 +57,10 @@ function StepsVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) 
                     <div>PC: 0x{current.cpuSnapshot.pc.toString(16)}</div>
                     <div>ALU Result: {current.cpuSnapshot.aluResult}</div>
                 </div>
+
+                <div className={"singleCycleProcessor"}>
+                    // TODO
+                </div>
             </div>
 
             <div className="registers">
