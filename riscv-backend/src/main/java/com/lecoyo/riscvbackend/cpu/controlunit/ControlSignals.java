@@ -9,4 +9,5 @@ public class ControlSignals {
     private boolean pcSrc, resultSrc, memWrite, aluSrc, regWrite;
     public byte aluControl;
     private byte immSrc;
+    private InstructionFormat instructionType;
 }

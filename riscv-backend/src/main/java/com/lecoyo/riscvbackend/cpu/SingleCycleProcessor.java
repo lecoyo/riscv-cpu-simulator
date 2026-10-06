@@ -1,10 +1,7 @@
 package com.lecoyo.riscvbackend.cpu;
 
 import com.lecoyo.riscvbackend.cpu.components.*;
-import com.lecoyo.riscvbackend.cpu.controlunit.ALUControl;
-import com.lecoyo.riscvbackend.cpu.controlunit.ControlSignals;
-import com.lecoyo.riscvbackend.cpu.controlunit.ControlUnit;
-import com.lecoyo.riscvbackend.cpu.controlunit.MainControlUnit;
+import com.lecoyo.riscvbackend.cpu.controlunit.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +38,8 @@ public class SingleCycleProcessor {
             int[] registers,
             int aluResult,
             int immExt,
-            boolean memWrite
+            boolean memWrite,
+            char instructionType
     ) {}
 
     /**
@@ -120,8 +118,27 @@ public class SingleCycleProcessor {
                 registerFile.getRegisters().clone(),
                 executeResult.aluResult(),
                 executeResult.immExt(),
-                controlSignals.isMemWrite()
+                controlSignals.isMemWrite(),
+                getInstructionType(controlSignals)
         );
+    }
+
+    /**
+     * Maps the instruction type of the given control signals to its single-letter
+     * RISC-V format identifier.
+     *
+     * @param controlSignals the control signals holding the decoded instruction type
+     * @return the format letter: 'I', 'U', 'S', 'R', 'B' or 'J'
+     */
+    private char getInstructionType(ControlSignals controlSignals) {
+        return switch (controlSignals.getInstructionType()) {
+            case I_TYPE_LOAD, I_TYPE_ALU -> 'I';
+            case U_TYPE -> 'U';
+            case S_TYPE -> 'S';
+            case R_TYPE -> 'R';
+            case B_TYPE -> 'B';
+            case J_TYPE -> 'J';
+        };
     }
 
     /**

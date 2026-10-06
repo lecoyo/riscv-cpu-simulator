@@ -1,5 +1,6 @@
 package com.lecoyo.riscvbackend.cpu.controlunit;
 
+import com.lecoyo.riscvbackend.assembly.Instruction;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
@@ -18,13 +19,13 @@ public class MainControlUnit {
         InstructionFormat instructionFormat = decodeTypes(op);
 
         return switch (instructionFormat) {
-            case I_TYPE_LOAD -> new ControlSignals(false, true, false, true, true, (byte) 0b00, (byte) 0b000);
-            case I_TYPE_ALU -> new ControlSignals(false, false, false, true, true, (byte) 0b11, (byte) 0b000);
-            case U_TYPE -> new ControlSignals(false, false, false, true, true, (byte) 0b00, (byte) 0b100);
-            case S_TYPE -> new ControlSignals(false, false, true, true, false, (byte) 0b00, (byte) 0b001);
-            case R_TYPE -> new ControlSignals(false, false, false, false, true, (byte) 0b10, (byte) 0b000);
-            case B_TYPE -> new ControlSignals(branchTaken, false, false, false, false, (byte) 0b01, (byte) 0b010);
-            case J_TYPE -> new ControlSignals(true, false, false, false, true, (byte) 0b00, (byte) 0b011);
+            case I_TYPE_LOAD -> new ControlSignals(false, true, false, true, true, (byte) 0b00, (byte) 0b000, InstructionFormat.I_TYPE_LOAD);
+            case I_TYPE_ALU -> new ControlSignals(false, false, false, true, true, (byte) 0b11, (byte) 0b000, InstructionFormat.I_TYPE_ALU);
+            case U_TYPE -> new ControlSignals(false, false, false, true, true, (byte) 0b00, (byte) 0b100, InstructionFormat.U_TYPE);
+            case S_TYPE -> new ControlSignals(false, false, true, true, false, (byte) 0b00, (byte) 0b001, InstructionFormat.S_TYPE);
+            case R_TYPE -> new ControlSignals(false, false, false, false, true, (byte) 0b10, (byte) 0b000, InstructionFormat.R_TYPE);
+            case B_TYPE -> new ControlSignals(branchTaken, false, false, false, false, (byte) 0b01, (byte) 0b010, InstructionFormat.B_TYPE);
+            case J_TYPE -> new ControlSignals(true, false, false, false, true, (byte) 0b00, (byte) 0b011, InstructionFormat.J_TYPE);
         };
     }
 
