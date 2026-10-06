@@ -16,6 +16,7 @@ export interface CpuSnapshot {
     aluResult: number
     immExt: number
     memWrite: boolean
+    instructionType: 'U' | 'I' | 'S' | 'R' | 'B' | 'J'
 }
 
 export interface Package {

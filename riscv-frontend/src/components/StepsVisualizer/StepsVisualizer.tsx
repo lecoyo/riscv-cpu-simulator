@@ -17,6 +17,15 @@ function StepsVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) 
 
     const current = trace[index]
 
+    const INSTRUCTION_VIEWS = {
+        U: <span>U-Type</span>,
+        I: <span>I-Type</span>,
+        S: <span>S-Type</span>,
+        R: <span>R-Type</span>,
+        B: <span>B-Type</span>,
+        J: <span>J-Type</span>,
+    };
+
     return (
         <div className="step-visualizer">
             <div className={"general"}>
@@ -45,6 +54,11 @@ function StepsVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) 
                     }
                     </div>
                     <div>
+                        Instruction-Type: {
+                        INSTRUCTION_VIEWS[current.cpuSnapshot.instructionType]
+                    }
+                    </div>
+                    <div>
                         Binary: {
                         (current.cpuSnapshot.instruction >>> 0).toString(2).padStart(32, '0')
                     }
@@ -56,10 +70,6 @@ function StepsVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) 
                     </div>
                     <div>PC: 0x{current.cpuSnapshot.pc.toString(16)}</div>
                     <div>ALU Result: {current.cpuSnapshot.aluResult}</div>
-                </div>
-
-                <div className={"singleCycleProcessor"}>
-                    // TODO
                 </div>
             </div>
 
