@@ -1,7 +1,10 @@
 package com.lecoyo.riscvbackend.cpu;
 
 import com.lecoyo.riscvbackend.cpu.components.*;
-import com.lecoyo.riscvbackend.cpu.controlunit.*;
+import com.lecoyo.riscvbackend.cpu.controlunit.ALUControl;
+import com.lecoyo.riscvbackend.cpu.controlunit.ControlSignals;
+import com.lecoyo.riscvbackend.cpu.controlunit.ControlUnit;
+import com.lecoyo.riscvbackend.cpu.controlunit.MainControlUnit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +26,7 @@ public class SingleCycleProcessor {
     private static final int OPCODE_AUIPC = 0b0010111;
     private static final int OPCODE_B_TYPE = 0b1100011;
 
-    private static final int MAX_CYCLES = 10000;
+    private static final int MAX_CYCLES = 100000;
 
     // program counter as byte address
     private int pc = 0;
