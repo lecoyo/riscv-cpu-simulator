@@ -53,7 +53,6 @@ public class MainControlUnit {
                     (byte) 0b000,
                     InstructionFormat.I_TYPE_JALR
             );
-            // lui/auipc: ALU adds; the processor sets the first operand to 0 (lui) or pc (auipc)
             case U_TYPE_AUIPC-> new ControlSignals(
                     false,
                     false,
@@ -94,7 +93,6 @@ public class MainControlUnit {
                     (byte) 0b000,
                     InstructionFormat.R_TYPE
             );
-            // branches: ALU subtracts, pcSrc depends on the branch condition
             case B_TYPE -> new ControlSignals(
                     branchTaken,
                     false,

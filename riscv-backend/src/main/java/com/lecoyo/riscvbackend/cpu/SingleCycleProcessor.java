@@ -115,28 +115,8 @@ public class SingleCycleProcessor {
                 executeResult.aluResult(),
                 executeResult.immExt(),
                 controlSignals.isMemWrite(),
-                getInstructionType(controlSignals)
+                controlSignals.getInstructionType().name()
         );
-    }
-
-    /**
-     * Maps the decoded instruction type to its name.
-     *
-     * @param controlSignals the control signals holding the instruction type
-     * @return the type name, e.g. "ILoad", "IAlu", "ULui", "S", "R", "B" or "J"
-     */
-    private String getInstructionType(ControlSignals controlSignals) {
-        return switch (controlSignals.getInstructionType()) {
-            case I_TYPE_LOAD -> "ILoad";
-            case I_TYPE_ALU -> "IAlu";
-            case I_TYPE_JALR -> "IJalr";
-            case U_TYPE_LUI -> "ULui";
-            case U_TYPE_AUIPC -> "UAuipc";
-            case S_TYPE -> "S";
-            case R_TYPE -> "R";
-            case B_TYPE -> "B";
-            case J_TYPE -> "J";
-        };
     }
 
     /**
