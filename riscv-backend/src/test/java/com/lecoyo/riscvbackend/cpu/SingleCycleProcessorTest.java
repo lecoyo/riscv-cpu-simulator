@@ -188,12 +188,13 @@ class SingleCycleProcessorTest {
     }
 
     @Test
-    void otherRegistersStayZero() {
+    void otherRegistersStayUntouched() {
         int[] regs = finalRegisters(run(addi(4, 0, 9)));
+        assertEquals(9, regs[4], "x4 should be 9");
         for (int i = 0; i < 32; i++) {
-            if (i != 4) {
-                assertEquals(0, regs[i], "x" + i + " should stay 0");
-            }
+            if (i == 4) continue;
+            int expected = (i == 2) ? MEMORY_SIZE / 2 : 0;
+            assertEquals(expected, regs[i], "x" + i + " should be unchanged");
         }
     }
 
