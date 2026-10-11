@@ -22,8 +22,4 @@ public class StateListGenerator {
 
         return;
     }
-
-    private void set(int row, int column) {
-        stateList.set()
-    }
 }
