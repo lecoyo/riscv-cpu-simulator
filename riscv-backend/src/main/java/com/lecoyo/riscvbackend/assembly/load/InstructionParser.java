@@ -128,9 +128,14 @@ public class InstructionParser {
                     imm = Integer.decode(arguments[2]);
                 }
                 else if (args.opcode == 0b1100111){
-                    rs1 = reg(arguments[2]);
-                    imm = isNumber(arguments[3]) ? Integer.decode(arguments[3])
-                            : labels.get(arguments[3]);
+                    rs1 = reg(arguments[3]);
+                    try {
+                        imm = Integer.decode(arguments[2]);
+                    } catch (NumberFormatException e) {
+                        throw new IllegalArgumentException(
+                                "jalr: expected numeric immediate: " + arguments[2]
+                        );
+                    }
                 }
                 else {
                     rs1 = reg(arguments[2]);
