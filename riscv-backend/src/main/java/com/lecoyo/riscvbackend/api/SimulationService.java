@@ -21,8 +21,8 @@ public class SimulationService {
         List<SingleCycleProcessor.CpuSnapshot> snapshotList = processor.simulate();
         String[] instructionStrings = loader.getInstructionString(code);
 
-        for (int i = 0; i < snapshotList.size(); i++) {
-            packageList.add(new Package(snapshotList.get(i), instructionStrings[i]));
+        for (SingleCycleProcessor.CpuSnapshot snapshot : snapshotList) {
+            packageList.add(new Package(snapshot, instructionStrings[snapshot.pc() / 4]));
         }
 
         return packageList;

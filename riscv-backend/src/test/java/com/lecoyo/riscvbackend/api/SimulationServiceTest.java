@@ -759,13 +759,12 @@ class SimulationServiceTest {
     @Test
     void branch_backwardLoop() {
         int[] regs = registersAtLastStep("""
-            addi x1, x0, 3
-            addi x2, x0, 0
-            addi x2, x2, 1
-            bne x2, x1, -4
+            addi x4, x0, 3
+            addi x3, x3, 1
+            bne x3, x4, -4
             addi x3, x0, 1
             """);
-        assertEquals(3, regs[2]);
+        assertEquals(3, regs[4]);
         assertEquals(1, regs[3]);
     }
 
