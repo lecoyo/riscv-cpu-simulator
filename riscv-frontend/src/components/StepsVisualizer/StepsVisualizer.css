@@ -106,3 +106,8 @@
     height: 1.5em;
     width: auto;
 }
+
+.image-output img{
+    height: 30rem;
+    width: auto;
+}

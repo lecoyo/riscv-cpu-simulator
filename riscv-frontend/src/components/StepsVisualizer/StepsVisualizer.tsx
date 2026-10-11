@@ -2,6 +2,15 @@ import './StepsVisualizer.css'
 import type {Package} from '../../types/types.ts'
 import skipB from '../../assets/skip-backward.svg'
 import skipF from '../../assets/skip-forward.svg'
+import scp_i_type_alu from '../../assets/scp-i-type-alu.jpg'
+import scp_i_type_load from '../../assets/scp-i-type-load.jpg'
+import scp_i_type_jalr from '../../assets/scp-i-type-jalr.jpg'
+import scp_r_type from '../../assets/scp-r-type.jpg'
+import scp_s_type from '../../assets/scp-s-type.jpg'
+import scp_b_type from '../../assets/scp-b-type.jpg'
+import scp_j_type from '../../assets/scp-j-type.jpg'
+import scp_u_type_auipc from '../../assets/scp-u-type-auipc.jpg'
+import scp_u_type_lui from '../../assets/scp-u-type-lui.jpg'
 import React from "react"
 
 interface StepsVisualizerProps {
@@ -18,12 +27,27 @@ function StepsVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) 
     const current = trace[index]
 
     const INSTRUCTION_VIEWS = {
-        U: <span>U-Type</span>,
-        I: <span>I-Type</span>,
-        S: <span>S-Type</span>,
-        R: <span>R-Type</span>,
-        B: <span>B-Type</span>,
-        J: <span>J-Type</span>,
+        I_TYPE_LOAD: <span>I-Type (Load)</span>,
+        I_TYPE_ALU: <span>I-Type (ALU)</span>,
+        I_TYPE_JALR: <span>I-Type (JALR)</span>,
+        U_TYPE_LUI: <span>U-Type (LUI)</span>,
+        U_TYPE_AUIPC: <span>U-Type (AUIPC)</span>,
+        S_TYPE: <span>S-Type</span>,
+        R_TYPE: <span>R-Type</span>,
+        B_TYPE: <span>B-Type</span>,
+        J_TYPE: <span>J-Type</span>,
+    };
+
+    const INSTRUCTION_IMG = {
+        I_TYPE_LOAD: <img src={scp_i_type_load} alt={"scp_i_type_load"} />,
+        I_TYPE_ALU: <img src={scp_i_type_alu} alt={"scp_i_type_alu"} />,
+        I_TYPE_JALR: <img src={scp_j_type} alt={"scp_i_type_jalr"} />,
+        U_TYPE_LUI: <img src={scp_u_type_lui} alt={"scp_u_type_lui"} />,
+        U_TYPE_AUIPC: <img src={scp_u_type_auipc} alt={"scp_u_type_auipc"} />,
+        S_TYPE: <img src={scp_s_type} alt={"scp_s_type"} />,
+        R_TYPE: <img src={scp_r_type} alt={"scp_r_type"} />,
+        B_TYPE: <img src={scp_b_type} alt={"scp_b_type"} />,
+        J_TYPE: <img src={scp_i_type_jalr} alt={"scp_j_type"} />,
     };
 
     return (
@@ -70,6 +94,12 @@ function StepsVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) 
                     </div>
                     <div>PC: 0x{current.cpuSnapshot.pc.toString(16)}</div>
                     <div>ALU Result: {current.cpuSnapshot.aluResult}</div>
+                </div>
+
+                <div className={"image-output"}>
+                    {
+                        INSTRUCTION_IMG[current.cpuSnapshot.instructionType]
+                    }
                 </div>
             </div>
 

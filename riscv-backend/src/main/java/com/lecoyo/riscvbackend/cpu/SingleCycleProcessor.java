@@ -1,10 +1,7 @@
 package com.lecoyo.riscvbackend.cpu;
 
 import com.lecoyo.riscvbackend.cpu.components.*;
-import com.lecoyo.riscvbackend.cpu.controlunit.ALUControl;
-import com.lecoyo.riscvbackend.cpu.controlunit.ControlSignals;
-import com.lecoyo.riscvbackend.cpu.controlunit.ControlUnit;
-import com.lecoyo.riscvbackend.cpu.controlunit.MainControlUnit;
+import com.lecoyo.riscvbackend.cpu.controlunit.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,13 +17,7 @@ public class SingleCycleProcessor {
     private final Extend extend;
     private final ALU alu;
 
-    private static final int OPCODE_JAL = 0b1101111;
-    private static final int OPCODE_JALR = 0b1100111;
-    private static final int OPCODE_LUI = 0b0110111;
-    private static final int OPCODE_AUIPC = 0b0010111;
-    private static final int OPCODE_B_TYPE = 0b1100011;
-
-    private static final int MAX_CYCLES = 100000;
+    private static final int MAX_CYCLES = 10000;
 
     // program counter as byte address
     private int pc = 0;
@@ -42,11 +33,11 @@ public class SingleCycleProcessor {
             int aluResult,
             int immExt,
             boolean memWrite,
-            char instructionType
+            String instructionType
     ) {}
 
     /**
-     * Creates a processor with the given program and data memory size.
+     * Creates a processor for the given program.
      *
      * @param instructions the program as bytes
      * @param memorySize   size of the data memory in bytes
@@ -56,15 +47,17 @@ public class SingleCycleProcessor {
         this.dataMemory = new DataMemory(memorySize);
         this.controlUnit = new ControlUnit(new MainControlUnit(), new ALUControl());
         this.registerFile = new RegisterFile();
+        // stack pointer (x2) starts in the middle of the data memory
         this.registerFile.write(2, memorySize/2, true);
         this.extend = new Extend();
         this.alu = new ALU();
     }
 
     /**
-     * Executes the whole program and returns a snapshot after every instruction.
+     * Runs the whole program.
      *
-     * @return the list of CPU snapshots, one per executed instruction
+     * @return one snapshot per executed instruction
+     * @throws IllegalArgumentException if the cycle limit is exceeded
      */
     public List<CpuSnapshot> simulate() {
         List<CpuSnapshot> trace = new ArrayList<>();
@@ -81,9 +74,9 @@ public class SingleCycleProcessor {
     }
 
     /**
-     * Executes one instruction and returns the resulting snapshot.
-     * For branch instructions the control signals are resolved twice: first without a branch decision
-     * to run the execute stage, then again with the evaluated branch condition so that {@code pcSrc} is set correctly.
+     * Executes one instruction.
+     * For branches the control signals are resolved twice: first without a branch decision
+     * (needed to run execute), then with the evaluated condition so that {@code pcSrc} is correct.
      *
      * @return the snapshot after this instruction
      */
@@ -101,7 +94,7 @@ public class SingleCycleProcessor {
 
         ExecuteResult executeResult = execute(decodeResult, controlSignals);
 
-        if (decodeResult.op() == OPCODE_B_TYPE) {
+        if (controlSignals.getInstructionType() == InstructionFormat.B_TYPE) {
             controlSignals = controlUnit.operate(
                     decodeResult.op(),
                     decodeResult.funct3(),
@@ -112,7 +105,7 @@ public class SingleCycleProcessor {
 
         int readData = memory(decodeResult, executeResult, controlSignals);
         writeBack(readData, decodeResult, executeResult, controlSignals);
-        pcUpdate(decodeResult, executeResult, controlSignals);
+        pcUpdate(executeResult, controlSignals);
 
         return new CpuSnapshot(
                 pcBefore,
@@ -122,35 +115,17 @@ public class SingleCycleProcessor {
                 executeResult.aluResult(),
                 executeResult.immExt(),
                 controlSignals.isMemWrite(),
-                getInstructionType(controlSignals)
+                controlSignals.getInstructionType().name()
         );
     }
 
     /**
-     * Maps the instruction type of the given control signals to its single-letter
-     * RISC-V format identifier.
+     * Evaluates the branch condition by comparing the two register values.
      *
-     * @param controlSignals the control signals holding the decoded instruction type
-     * @return the format letter: 'I', 'U', 'S', 'R', 'B' or 'J'
-     */
-    private char getInstructionType(ControlSignals controlSignals) {
-        return switch (controlSignals.getInstructionType()) {
-            case I_TYPE_LOAD, I_TYPE_ALU -> 'I';
-            case U_TYPE -> 'U';
-            case S_TYPE -> 'S';
-            case R_TYPE -> 'R';
-            case B_TYPE -> 'B';
-            case J_TYPE -> 'J';
-        };
-    }
-
-    /**
-     * Evaluates the branch condition of a B-type instruction by comparing the two source register values.
-     *
-     * @param executeResult the result of the execute stage, providing the register values
-     * @param decodeResult the decoded instruction fields, providing {@code funct3} to select the comparison
-     * @return {@code true} if the according branch condition is met
-     * @throws IllegalArgumentException if {@code funct3} does not match a known branch instruction
+     * @param executeResult provides the register values
+     * @param decodeResult provides {@code funct3} to select the comparison
+     * @return {@code true} if the branch condition is met
+     * @throws IllegalArgumentException if {@code funct3} is not a known branch
      */
     private boolean isZeroFlag(ExecuteResult executeResult, DecodeResult decodeResult) {
         int rd1 = executeResult.rd1();
@@ -177,41 +152,46 @@ public class SingleCycleProcessor {
     }
 
     /**
-     * Splits the instruction word into its bit fields.
+     * Splits the instruction into its bit fields.
      *
      * @param instruction the 32-bit instruction
      * @return the extracted fields
      */
     private DecodeResult decode(int instruction) {
         return new DecodeResult(
-            (byte) (instruction & 0b1111111), // 6:0
-            (byte) ((instruction >>> 7) & 0b11111), // 11:7
-            (byte) ((instruction >>> 12) & 0b111), // 14:12
-            (byte) ((instruction >>> 15) & 0b11111), // 19:15
-            (byte) ((instruction >>> 20) & 0b11111), // 24:20
-            (byte) (instruction >>> 25), // 31:25
-            (instruction >>> 7) // 31:7
+                (byte) (instruction & 0b1111111), // 6:0
+                (byte) ((instruction >>> 7) & 0b11111), // 11:7
+                (byte) ((instruction >>> 12) & 0b111), // 14:12
+                (byte) ((instruction >>> 15) & 0b11111), // 19:15
+                (byte) ((instruction >>> 20) & 0b11111), // 24:20
+                (byte) (instruction >>> 25), // 31:25
+                (instruction >>> 7) // 31:7
         );
     }
 
     /**
      * Reads the registers, extends the immediate and computes the ALU result.
-     * The first ALU operand is the value of {@code rs1}, except for {@code lui} (constant 0)
-     * and {@code auipc} (the current pc).
+     * The first ALU operand is {@code rs1}, except for {@code lui} (0) and {@code auipc} (pc).
      *
      * @param decodeResult the decoded instruction fields
      * @param controlSignals the control signals of the instruction
-     * @return the ALU result, the second register value and the extended immediate
+     * @return the ALU result, both ALU-side register values and the extended immediate
      */
     private ExecuteResult execute(DecodeResult decodeResult, ControlSignals controlSignals) {
         // Register file
         int[] rd = registerFile.read(decodeResult.rs1(), decodeResult.rs2());
-        int rd1 = switch (decodeResult.op()) {
-            case OPCODE_LUI -> 0;
-            case OPCODE_AUIPC -> pc;
-            default -> rd[0];
-        };
+
+        InstructionFormat instructionType = controlSignals.getInstructionType();
+
+        int rd1 = rd[0];
         int rd2 = rd[1];
+
+        if (instructionType == InstructionFormat.U_TYPE_AUIPC) {
+            rd1 = pc;
+        }
+        else if (instructionType == InstructionFormat.U_TYPE_LUI) {
+            rd1 = 0;
+        }
 
         // Extend
         int immExt = extend.operate(decodeResult.rawImmediate(), controlSignals.getImmSrc());
@@ -224,15 +204,14 @@ public class SingleCycleProcessor {
     }
 
     /**
-     * Accesses the data memory (load or store).
-     * The memory is only accessed for loads ({@code resultSrc}) and stores ({@code memWrite}).
-     * Stores of a byte or halfword (sb, sh) only replace the lowest bytes of the addressed word.
-     * Loads are narrowed according to {@code funct3} and sign- or zero-extended (lb, lh, lw, lbu, lhu).
+     * Accesses the data memory, only for loads and stores.
+     * Stores narrower than a word (sb, sh) replace only the lowest bytes of the addressed word.
+     * Loads are narrowed by {@code funct3} and sign- or zero-extended (lb, lh, lw, lbu, lhu).
      *
      * @param decodeResult the decoded instruction fields
      * @param executeResult the result of the execute stage
      * @param controlSignals the control signals of the instruction
-     * @return the data read from memory, or {@code 0} if the instruction is a store or does not access memory
+     * @return the loaded value, or {@code 0} for stores and non-memory instructions
      */
     private int memory(DecodeResult decodeResult, ExecuteResult executeResult, ControlSignals controlSignals) {
         if (!controlSignals.isMemWrite() && !controlSignals.isResultSrc()) return 0;
@@ -262,9 +241,9 @@ public class SingleCycleProcessor {
     }
 
     /**
-     * Selects the value to write back and writes it to the destination register.
-     * For {@code jal} and {@code jalr} the return address {@code pc + 4} is written,
-     * otherwise the value is selected between ALU result and memory data.
+     * Writes the result to the destination register.
+     * The result is the ALU result or the memory data; for {@code jal} and {@code jalr}
+     * it is the return address {@code pc + 4}.
      *
      * @param readData the data read from data memory
      * @param decodeResult the decoded instruction fields
@@ -274,7 +253,8 @@ public class SingleCycleProcessor {
     private void writeBack(int readData, DecodeResult decodeResult, ExecuteResult executeResult, ControlSignals controlSignals) {
         int result = Mux2.select(executeResult.aluResult(), readData, controlSignals.isResultSrc());
 
-        if (decodeResult.op() == OPCODE_JAL || decodeResult.op() == OPCODE_JALR) {
+        InstructionFormat instructionType = controlSignals.getInstructionType();
+        if (instructionType == InstructionFormat.J_TYPE || instructionType == InstructionFormat.I_TYPE_JALR) {
             result = Adder.add(pc, 4);
         }
 
@@ -282,23 +262,19 @@ public class SingleCycleProcessor {
     }
 
     /**
-     * Sets the pc to either {@code pc + 4} or the branch/jump target.
-     * For {@code jalr} the target is the ALU result ({@code rs1 + imm}) with the lowest bit cleared
-     * and the jump is always taken.
-     * For {@code jal} and branches the target is {@code pc + imm}.
+     * Sets the pc to {@code pc + 4} or to the jump/branch target.
+     * {@code jalr} always jumps to {@code rs1 + imm} (ALU result) with the lowest bit cleared.
+     * {@code jal} and branches jump to {@code pc + imm}.
      *
-     * @param decodeResult the decoded instruction fields
      * @param executeResult the result of the execute stage
      * @param controlSignals the control signals of the instruction
      */
-    private void pcUpdate(DecodeResult decodeResult, ExecuteResult executeResult, ControlSignals controlSignals) {
-        boolean isJalr = decodeResult.op() == OPCODE_JALR;
-
-        int pcTarget = isJalr
+    private void pcUpdate(ExecuteResult executeResult, ControlSignals controlSignals) {
+        int pcTarget = controlSignals.getInstructionType() == InstructionFormat.I_TYPE_JALR
                 ? executeResult.aluResult() & ~1
                 : Adder.add(pc, executeResult.immExt());
         int pcPlus4 = Adder.add(pc, 4);
 
-        pc = Mux2.select(pcPlus4, pcTarget, isJalr || controlSignals.isPcSrc());
+        pc = Mux2.select(pcPlus4, pcTarget, controlSignals.isPcSrc());
     }
 }
