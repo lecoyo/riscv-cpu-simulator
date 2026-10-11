@@ -10,6 +10,4 @@ public class StateList {
     public void set(int instructionNumber, int cycle) {
 
     }
-
-    public void
 }

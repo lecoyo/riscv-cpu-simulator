@@ -1,20 +1,29 @@
 package com.lecoyo.riscvbackend.pipelined;
 
-import com.lecoyo.riscvbackend.assembly.Instruction;
+import com.lecoyo.riscvbackend.api.Package;
 import com.lecoyo.riscvbackend.assembly.ProgramData;
-import com.lecoyo.riscvbackend.cpu.SingleCycleProcessor;
-import com.lecoyo.riscvbackend.cpu.SingleCycleProcessor.CpuSnapshot;
+import com.lecoyo.riscvbackend.assembly.load.InstructionParser;
 
 import java.util.List;
 
 public class StateListGenerator {
-    private List<InstructionStates> stateList;
+    private List<List<InstructionStates>> stateList;
     private ProgramData programData;
 
-    private List<Instruction> getExecutedInstructions(byte[] instructions, int memorySize) {
-        SingleCycleProcessor temp_cpu = new SingleCycleProcessor(instructions, memorySize);
-        List<Integer> all_executed = temp_cpu.simulate().stream().map(CpuSnapshot::instruction).toList();
+    public void generateList(List<Package> pkg) {
+        // TODO
+        for(int i = 0; i < pkg.size(); i++) {
+            String mnemonic = pkg.get(i).instructionString().split(" ")[0];
+            switch(InstructionParser.getOpcode(mnemonic)) {
+                case 0b0000011:
+                    return;
+            }
+        }
 
-        all_executed.
+        return;
+    }
+
+    private void set(int row, int column) {
+        stateList.set()
     }
 }

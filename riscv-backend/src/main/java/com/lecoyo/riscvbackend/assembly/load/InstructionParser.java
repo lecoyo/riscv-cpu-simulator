@@ -2,9 +2,11 @@ package com.lecoyo.riscvbackend.assembly.load;
 
 import com.lecoyo.riscvbackend.assembly.Instruction;
 import com.lecoyo.riscvbackend.assembly.types.*;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 
+@NoArgsConstructor
 public class InstructionParser {
     private static final HashMap<String, InstInfo> INSTMAP = new HashMap<>();
     private static final HashMap<String, Byte> REGMAP = new HashMap<>();
@@ -230,6 +232,10 @@ public class InstructionParser {
 
     public static InstType getType(Instruction inst) {
         return INSTMAP.get(inst.mnemonic).type();
+    }
+
+    public static int getOpcode(String mnemonic) {
+        return INSTMAP.get(mnemonic).opcode();
     }
 
     public static boolean isLabel(String line) {
