@@ -1,29 +1,30 @@
-import { useSimulation } from '../../hooks/useSimulation.ts'
-import CodeEditor from "../../components/CodeEditor/CodeEditor.tsx";
-import StepVisualizer from "../../components/StepsVisualizer/StepVisualizer.tsx";
 import './Home.css'
-import { useState } from "react";
-import RegisterView from "../../components/RegisterView/RegisterView.tsx";
+import { Link } from 'react-router'
 
 function Home() {
-    const { trace, loading, error, simulate } = useSimulation()
-    const [currentIndex, setCurrentIndex] = useState(0)
-
-    async function handleSubmit(code: string) {
-        await simulate(code)
-        setCurrentIndex(0)
-    }
-
-    const current = trace[currentIndex]
-
     return (
-        <div className={"home"}>
-            <CodeEditor onSubmit={handleSubmit} loading={loading} />
-            {error && <div className="error">{error}</div>}
-            <StepVisualizer trace={trace} index={currentIndex} onIndexChange={setCurrentIndex} />
-            <RegisterView registers={current?.cpuSnapshot.registers}></RegisterView>
+        <div className="home">
+            <div className="article-single-cycle">
+                <h2>RISC-V Single-Cycle Processor Simulator</h2>
+                <p>
+                    Write RISC-V assembly, run it, and step through the execution
+                    instruction by instruction. See all 32 registers and various properties
+                    update with every step.
+                </p>
+
+                <ul className="home-features">
+                    <li>Step forward and backward through the whole program</li>
+                    <li>Instruction type, binary and hex encoding at each step</li>
+                    <li>Datapath diagram for every instruction format</li>
+                    <li>Live register view</li>
+                </ul>
+
+                <Link to="/single-cycle" className="home-link">
+                    Single-Cycle Simulator
+                </Link>
+            </div>
         </div>
-    )
+    );
 }
 
 export default Home

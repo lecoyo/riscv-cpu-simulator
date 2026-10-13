@@ -1,5 +1,38 @@
+
+
 .home {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
+    font-size: 1.5rem;
+}
 
+.article-single-cycle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 60ch;
+    text-align: left;
+}
+
+.home-features {
+    margin: 0;
+    padding-left: 1.25rem;
+}
+
+.home-features li {
+    padding: 0.5rem 0;
+}
+
+.home-link {
+    padding: 0.75rem 1.5rem;
+    border-radius: 5rem;
+    background: var(--accent);
+    color: white;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.home-link:hover {
+    background: var(--accent-hover);
 }
