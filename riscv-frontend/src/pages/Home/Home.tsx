@@ -1,8 +1,9 @@
 import { useSimulation } from '../../hooks/useSimulation.ts'
 import CodeEditor from "../../components/CodeEditor/CodeEditor.tsx";
-import StepsVisualizer from "../../components/StepsVisualizer/StepsVisualizer.tsx";
+import StepVisualizer from "../../components/StepsVisualizer/StepVisualizer.tsx";
 import './Home.css'
 import { useState } from "react";
+import RegisterView from "../../components/RegisterView/RegisterView.tsx";
 
 function Home() {
     const { trace, loading, error, simulate } = useSimulation()
@@ -13,13 +14,16 @@ function Home() {
         setCurrentIndex(0)
     }
 
+    const current = trace[currentIndex]
+
     return (
         <div className={"home"}>
             <CodeEditor onSubmit={handleSubmit} loading={loading} />
             {error && <div className="error">{error}</div>}
-            <StepsVisualizer trace={trace} index={currentIndex} onIndexChange={setCurrentIndex} />
+            <StepVisualizer trace={trace} index={currentIndex} onIndexChange={setCurrentIndex} />
+            <RegisterView registers={current?.cpuSnapshot.registers}></RegisterView>
         </div>
-    );
+    )
 }
 
-export default Home;
+export default Home
