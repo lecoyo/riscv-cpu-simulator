@@ -1,3 +1,19 @@
+@media (max-width: 768px) {
+    .single-cycle {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .code-editor {
+        width: 100%;
+    }
+
+    .registers {
+        display: flex;
+        justify-content: center;
+    }
+}
+
 .single-cycle {
     display: flex;
     justify-content: space-between;

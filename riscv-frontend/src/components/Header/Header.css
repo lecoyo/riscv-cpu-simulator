@@ -1,3 +1,28 @@
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .header-brand {
+        gap: 1rem;
+    }
+
+    .header-logo {
+        height: 3.5rem;
+    }
+
+    .navbar {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1rem 1.5rem;
+        font-size: 1.1rem;
+    }
+}
+
+
 .header {
     display: flex;
     justify-content: space-between;
