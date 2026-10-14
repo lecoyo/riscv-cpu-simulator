@@ -16,6 +16,8 @@ public class SingleCycleProcessor {
     private final RegisterFile registerFile;
     private final Extend extend;
     private final ALU alu;
+    private final Mux2 mux2;
+    private final Adder adder;
 
     private static final int MAX_CYCLES = 10000;
 
@@ -51,6 +53,8 @@ public class SingleCycleProcessor {
         this.registerFile.write(2, memorySize/2, true);
         this.extend = new Extend();
         this.alu = new ALU();
+        this.mux2 = new Mux2();
+        this.adder = new Adder();
     }
 
     /**
@@ -197,7 +201,7 @@ public class SingleCycleProcessor {
         int immExt = extend.operate(decodeResult.rawImmediate(), controlSignals.getImmSrc());
 
         // ALU
-        int aluSrcB = Mux2.select(rd2, immExt, controlSignals.isAluSrc());
+        int aluSrcB = mux2.select(rd2, immExt, controlSignals.isAluSrc());
         int aluResult = alu.operate(rd1, aluSrcB, controlSignals.getAluControl());
 
         return new ExecuteResult(aluResult, rd1, rd2, immExt);
@@ -251,11 +255,11 @@ public class SingleCycleProcessor {
      * @param controlSignals the control signals of the instruction
      */
     private void writeBack(int readData, DecodeResult decodeResult, ExecuteResult executeResult, ControlSignals controlSignals) {
-        int result = Mux2.select(executeResult.aluResult(), readData, controlSignals.isResultSrc());
+        int result = mux2.select(executeResult.aluResult(), readData, controlSignals.isResultSrc());
 
         InstructionFormat instructionType = controlSignals.getInstructionType();
         if (instructionType == InstructionFormat.J_TYPE || instructionType == InstructionFormat.I_TYPE_JALR) {
-            result = Adder.add(pc, 4);
+            result = adder.add(pc, 4);
         }
 
         registerFile.write(decodeResult.rd(), result, controlSignals.isRegWrite());
@@ -265,16 +269,16 @@ public class SingleCycleProcessor {
      * Sets the pc to {@code pc + 4} or to the jump/branch target.
      * {@code jalr} always jumps to {@code rs1 + imm} (ALU result) with the lowest bit cleared.
      * {@code jal} and branches jump to {@code pc + imm}.
-     *
+
      * @param executeResult the result of the execute stage
      * @param controlSignals the control signals of the instruction
      */
     private void pcUpdate(ExecuteResult executeResult, ControlSignals controlSignals) {
         int pcTarget = controlSignals.getInstructionType() == InstructionFormat.I_TYPE_JALR
                 ? executeResult.aluResult() & ~1
-                : Adder.add(pc, executeResult.immExt());
-        int pcPlus4 = Adder.add(pc, 4);
+                : adder.add(pc, executeResult.immExt());
+        int pcPlus4 = adder.add(pc, 4);
 
-        pc = Mux2.select(pcPlus4, pcTarget, controlSignals.isPcSrc());
+        pc = mux2.select(pcPlus4, pcTarget, controlSignals.isPcSrc());
     }
 }

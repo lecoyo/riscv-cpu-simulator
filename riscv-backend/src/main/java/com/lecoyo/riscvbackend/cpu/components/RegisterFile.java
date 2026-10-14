@@ -8,7 +8,6 @@ public class RegisterFile {
 
     /**
      * Creates the register file with 32 registers, all initialized to 0.
-     * Register x0 is hardwired to 0 and can never be written.
      */
     public RegisterFile() {
         registers = new int[32];
