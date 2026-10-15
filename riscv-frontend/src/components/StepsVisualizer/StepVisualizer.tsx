@@ -60,7 +60,7 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
         current.cpuSnapshot.instructionType === "U_TYPE_AUIPC" ||
         current.cpuSnapshot.instructionType === "U_TYPE_LUI";
 
-    const pcSrc = isJ_Type ? "10 (extension)" : current.cpuSnapshot.controlSignals.pcSrc ? 1 : 0;
+    const pcSrc = isJ_Type ? "10 (extension for)" : current.cpuSnapshot.controlSignals.pcSrc ? 1 : 0;
 
     const immSrc = isR_Type ? "xx" : current.cpuSnapshot.controlSignals.immSrc;
 
