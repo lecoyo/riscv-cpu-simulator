@@ -38,7 +38,7 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
         R_TYPE: <span>R-Type</span>,
         B_TYPE: <span>B-Type</span>,
         J_TYPE: <span>J-Type</span>,
-    };
+    }
 
     const INSTRUCTION_IMG = {
         I_TYPE_LOAD: <img src={scp_i_type_load} alt={"scp_i_type_load"} />,
@@ -50,7 +50,33 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
         R_TYPE: <img src={scp_r_type} alt={"scp_r_type"} />,
         B_TYPE: <img src={scp_b_type} alt={"scp_b_type"} />,
         J_TYPE: <img src={scp_i_type_jalr} alt={"scp_j_type"} />,
-    };
+    }
+
+    // insert dont cares into control signals and decode them
+    const isJ_Type = current.cpuSnapshot.instructionType === "J_TYPE";
+    const isR_Type = current.cpuSnapshot.instructionType === "R_TYPE";
+    const isI_Type_JALR = current.cpuSnapshot.instructionType === "I_TYPE_JALR";
+    const isU_Type =
+        current.cpuSnapshot.instructionType === "U_TYPE_AUIPC" ||
+        current.cpuSnapshot.instructionType === "U_TYPE_LUI";
+
+    const pcSrc = isJ_Type ? "10 (extension)" : current.cpuSnapshot.controlSignals.pcSrc ? 1 : 0;
+
+    const immSrc = isR_Type ? "xx" : current.cpuSnapshot.controlSignals.immSrc;
+
+    const resultSrc = isJ_Type || isI_Type_JALR ?
+        "10 (extension for pc+4 writeback)" : current.cpuSnapshot.controlSignals.resultSrc ? 1 : 0;
+
+    const memWrite = current.cpuSnapshot.controlSignals.memWrite ? 1 : 0;
+
+    const aluControl = isI_Type_JALR || isU_Type ?
+        "xxxx" : (current.cpuSnapshot.controlSignals.aluControl >>> 0).toString(2).padStart(4, "0");
+
+    const aluSrc = isI_Type_JALR || isU_Type ?
+        "x" : current.cpuSnapshot.controlSignals.aluSrc ? 1 : 0;
+
+    const regWrite = current.cpuSnapshot.controlSignals.regWrite ? 1 : 0;
+
 
     return (
         <div className="step-visualizer">
@@ -99,6 +125,17 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
                 {
                     INSTRUCTION_IMG[current.cpuSnapshot.instructionType]
                 }
+            </div>
+
+            <div className={"control-signals"}>
+                <h3>Control Signals:</h3>
+                <div>PCSrc: {pcSrc}</div>
+                <div>ResultSrc: {resultSrc}</div>
+                <div>MemWrite: {memWrite}</div>
+                <div>ALUControl: {aluControl}</div>
+                <div>ALUSrc: {aluSrc}</div>
+                <div>ImmSrc: {immSrc}</div>
+                <div>RegWrite: {regWrite}</div>
             </div>
         </div>
     )
