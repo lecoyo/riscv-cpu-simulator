@@ -21,7 +21,7 @@ The processor design is based on the single-cycle RISC-V microarchitecture by Ha
 
 ### Features
 
-- Assembler for almost every RV32I instruction(see below)
+- Assembler for almost every RV32I instruction (see below)
 - Single-cycle processor model with fetch, decode, execute, memory and write-back in one cycle
 - Step-by-step trace with the program counter, the instruction, the registers, the ALU result and the control signals for each instruction.
 - Image to show the used paths inside the processor
@@ -73,7 +73,7 @@ After running this program, `t3` contains `42`.
 
 ### Architecture
 
-- **Registers:** 32 registers, `x0`(`zero`) is hardwired to zero, `x2` (`sp`) starts at half of the memory size
+- **Registers:** 32 registers, `x0` (`zero`) is hardwired to zero, `x2` (`sp`) starts at half of the memory size
 - **Data memory:** byte-addressable, little-endian, supports byte, halfword and word accesses, base size is 2048
 - **Instruction memory:** the assembled program, little-endian
 - **Components:** register file, ALU, immediate extender, main control unit and ALU control
