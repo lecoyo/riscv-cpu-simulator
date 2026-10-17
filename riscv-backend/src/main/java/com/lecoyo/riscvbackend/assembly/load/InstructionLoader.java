@@ -27,7 +27,7 @@ public class InstructionLoader {
         while(readIndex < lines.length) {
             String cleanLine = clean(lines[readIndex]);
 
-            if (cleanLine.isBlank()) {
+            if (cleanLine.isBlank() || cleanLine.contains(":")) {
                 readIndex++;
             }
             else {
