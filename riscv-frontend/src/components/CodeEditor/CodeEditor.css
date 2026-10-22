@@ -35,7 +35,7 @@
     padding: 0 1.5rem;
     border: none;
     border-radius: 0.5rem;
-    background-color: #58bf30;
+    background-color: var(--accent);
     color: white;
     font-family: inherit;
     font-size: 1.75rem;
@@ -44,7 +44,7 @@
 }
 
 .code-editor button:hover {
-    background-color: #4aa626;
+    background-color: var(--accent-hover);
 }
 
 .code-editor button img {

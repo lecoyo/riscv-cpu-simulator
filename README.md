@@ -15,7 +15,7 @@ It is largely based on the processor design and explanations presented in **Digi
 A web-based RISC-V (RV32I) simulator.
 Write assembly code in the browser, a backend service assembles it and runs it on a simulated **single-cycle processor**.
 The execution is returned as a step-by-step trace to show every register and property in each step.
-The processor design is based on the single-cycle RISC-V microarchitecture by Harris & Harris:
+The processor design is largely based on the single-cycle RISC-V microarchitecture by Harris & Harris:
 ![SingleCycleProcessor](docs/images/SingleCycleProcessor.png)
 *Although there are some changes and extensions made to ensure that all J-Type, U-Type and I-Type (JALR) Instructions work properly.*
 

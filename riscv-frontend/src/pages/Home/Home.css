@@ -8,13 +8,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    max-width: 60ch;
+    max-width: 80ch;
     text-align: left;
 }
 
+.article-single-cycle img {
+    margin-top: 2rem;
+    height: 40rem;
+    width: auto;
+}
+
+.remark {
+    font-style: italic;
+}
+
 .home-features {
-    margin: 0;
     padding-left: 1.25rem;
 }
 
@@ -23,6 +31,7 @@
 }
 
 .home-link {
+    margin-top: 1rem;
     padding: 0.75rem 1.5rem;
     border-radius: 5rem;
     background: var(--accent);
