@@ -12,7 +12,6 @@ function Header() {
             <ul className={"navbar"}>
                 <li><NavLink to={"/"} end>Home</NavLink></li>
                 <li><NavLink to={"/single-cycle"}>Single-Cycle Processor</NavLink></li>
-                <li><NavLink to={"/multi-cycle"}>Multi-Cycle Processor</NavLink></li>
                 <li><NavLink to={"/pipelined"}>Pipelined Processor</NavLink></li>
             </ul>
         </div>

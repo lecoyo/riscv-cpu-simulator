@@ -20,7 +20,7 @@ interface StepsVisualizerProps {
 
 function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
     if (trace.length === 0) {
-        return <div className="step-visualizer">No program simulated yet.</div>
+        return <div className="no-program">No program simulated yet.</div>
     }
 
     const current = trace[index]
@@ -79,7 +79,7 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
 
 
     return (
-        <div className="step-visualizer">
+        <div className={"step-visualizer"}>
             <div className={"step-counter"}>
                 <button className={"step-counter-outer skip-right"} disabled={index === 0} onClick={() => onIndexChange(0)}>
                     <img alt={"skipB"} src={skipB} />
@@ -97,45 +97,46 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
                     <img alt={"skipF"} src={skipF} />
                 </button>
             </div>
+            <div className="output">
+                <div className={"general-output"}>
+                    <div>
+                        Instruction: {
+                        (current.instructionString)
+                    }
+                    </div>
+                    <div>
+                        Instruction-Type: {
+                        INSTRUCTION_VIEWS[current.cpuSnapshot.instructionType]
+                    }
+                    </div>
+                    <div>
+                        Binary: {groupedBin}
+                    </div>
+                    <div>
+                        Hexadecimal: 0x{
+                        (current.cpuSnapshot.instruction >>> 0).toString(16).padStart(8, '0')
+                    }
+                    </div>
+                    <div>PC: 0x{current.cpuSnapshot.pc.toString(16)}</div>
+                    <div>ALU Result: {current.cpuSnapshot.aluResult}</div>
+                </div>
 
-            <div className={"general-output"}>
-                <div>
-                    Instruction: {
-                    (current.instructionString)
-                }
+                <div className={"image-output"}>
+                    {
+                        INSTRUCTION_IMG[current.cpuSnapshot.instructionType]
+                    }
                 </div>
-                <div>
-                    Instruction-Type: {
-                    INSTRUCTION_VIEWS[current.cpuSnapshot.instructionType]
-                }
-                </div>
-                <div>
-                    Binary: {groupedBin}
-                </div>
-                <div>
-                    Hexadecimal: 0x{
-                    (current.cpuSnapshot.instruction >>> 0).toString(16).padStart(8, '0')
-                }
-                </div>
-                <div>PC: 0x{current.cpuSnapshot.pc.toString(16)}</div>
-                <div>ALU Result: {current.cpuSnapshot.aluResult}</div>
-            </div>
 
-            <div className={"image-output"}>
-                {
-                    INSTRUCTION_IMG[current.cpuSnapshot.instructionType]
-                }
-            </div>
-
-            <div className={"control-signals"}>
-                <h3>Control Signals:</h3>
-                <div>PCSrc: {pcSrc}</div>
-                <div>ResultSrc: {resultSrc}</div>
-                <div>MemWrite: {memWrite}</div>
-                <div>ALUControl: {aluControl}</div>
-                <div>ALUSrc: {aluSrc}</div>
-                <div>ImmSrc: {immSrc}</div>
-                <div>RegWrite: {regWrite}</div>
+                <div className={"control-signals"}>
+                    <h3>Control Signals:</h3>
+                    <div>PCSrc: {pcSrc}</div>
+                    <div>ResultSrc: {resultSrc}</div>
+                    <div>MemWrite: {memWrite}</div>
+                    <div>ALUControl: {aluControl}</div>
+                    <div>ALUSrc: {aluSrc}</div>
+                    <div>ImmSrc: {immSrc}</div>
+                    <div>RegWrite: {regWrite}</div>
+                </div>
             </div>
         </div>
     )
