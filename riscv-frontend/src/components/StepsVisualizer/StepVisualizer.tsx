@@ -2,15 +2,15 @@ import './StepVisualizer.css'
 import type {Package} from '../../types/types.ts'
 import skipB from '../../assets/skip-backward.svg'
 import skipF from '../../assets/skip-forward.svg'
-import scp_i_type_alu from '../../assets/scp-i-type-alu.jpg'
-import scp_i_type_load from '../../assets/scp-i-type-load.jpg'
-import scp_i_type_jalr from '../../assets/scp-i-type-jalr.jpg'
-import scp_r_type from '../../assets/scp-r-type.jpg'
-import scp_s_type from '../../assets/scp-s-type.jpg'
-import scp_b_type from '../../assets/scp-b-type.jpg'
-import scp_j_type from '../../assets/scp-j-type.jpg'
-import scp_u_type_auipc from '../../assets/scp-u-type-auipc.jpg'
-import scp_u_type_lui from '../../assets/scp-u-type-lui.jpg'
+import scp_i_type_alu from '../../assets/scp-i-type-alu.svg'
+import scp_i_type_load from '../../assets/scp-i-type-load.svg'
+import scp_i_type_jalr from '../../assets/scp-i-type-jalr.svg'
+import scp_r_type from '../../assets/scp-r-type.svg'
+import scp_s_type from '../../assets/scp-s-type.svg'
+import scp_b_type from '../../assets/scp-b-type.svg'
+import scp_j_type from '../../assets/scp-j-type.svg'
+import scp_u_type_auipc from '../../assets/scp-u-type-auipc.svg'
+import scp_u_type_lui from '../../assets/scp-u-type-lui.svg'
 
 interface StepsVisualizerProps {
     trace: Package[]
@@ -60,12 +60,12 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
         current.cpuSnapshot.instructionType === "U_TYPE_AUIPC" ||
         current.cpuSnapshot.instructionType === "U_TYPE_LUI";
 
-    const pcSrc = isJ_Type ? "10 (extension for)" : current.cpuSnapshot.controlSignals.pcSrc ? 1 : 0;
+    const pcSrc = isJ_Type ? "10" : current.cpuSnapshot.controlSignals.pcSrc ? 1 : 0;
 
     const immSrc = isR_Type ? "xx" : current.cpuSnapshot.controlSignals.immSrc;
 
     const resultSrc = isJ_Type || isI_Type_JALR ?
-        "10 (extension for pc+4 writeback)" : current.cpuSnapshot.controlSignals.resultSrc ? 1 : 0;
+        "10" : current.cpuSnapshot.controlSignals.resultSrc ? 1 : 0;
 
     const memWrite = current.cpuSnapshot.controlSignals.memWrite ? 1 : 0;
 
