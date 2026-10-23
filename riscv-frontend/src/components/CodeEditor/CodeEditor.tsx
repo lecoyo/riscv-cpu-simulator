@@ -17,6 +17,10 @@ function CodeEditor({ onSubmit, loading }: CodeEditorProps) {
 
     return (
         <div className={"code-editor"}>
+            <button onClick={handleSimulate} disabled={loading}>
+                <img alt={"play-icon"} src={play} />
+                {loading ? 'Simulating...' : 'Simulate'}
+            </button>
             <textarea
                 className={"code-input"}
                 value={text}
@@ -25,10 +29,6 @@ function CodeEditor({ onSubmit, loading }: CodeEditorProps) {
                 spellCheck={false}
                 rows={10}
             />
-            <button onClick={handleSimulate} disabled={loading}>
-                <img alt={"play-icon"} src={play} />
-                {loading ? 'Simulating...' : 'Simulate'}
-            </button>
         </div>
     )
 }
