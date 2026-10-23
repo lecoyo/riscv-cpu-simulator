@@ -19,15 +19,19 @@ interface StepsVisualizerProps {
 }
 
 function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
+    // initial output
     if (trace.length === 0) {
         return <div className="no-program">No program simulated yet.</div>
     }
 
+    // get the current trace
     const current = trace[index]
 
-    const bin = (current.cpuSnapshot.instruction >>> 0).toString(2).padStart(32, '0')
-    const groupedBin = bin.replace(/(.{4})(?=.)/g, '$1 ')
+    // group binary into chunks of 4
+    const binary = (current.cpuSnapshot.instruction >>> 0).toString(2).padStart(32, '0')
+    const groupedBinary = binary.replace(/(.{4})(?=.)/g, '$1 ')
 
+    // instruction type output
     const INSTRUCTION_VIEWS = {
         I_TYPE_LOAD: <span>I-Type (Load)</span>,
         I_TYPE_ALU: <span>I-Type (ALU)</span>,
@@ -40,6 +44,7 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
         J_TYPE: <span>J-Type</span>,
     }
 
+    // instruction image according to the instruction type
     const INSTRUCTION_IMG = {
         I_TYPE_LOAD: <img src={scp_i_type_load} alt={"scp_i_type_load"} />,
         I_TYPE_ALU: <img src={scp_i_type_alu} alt={"scp_i_type_alu"} />,
@@ -52,33 +57,25 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
         J_TYPE: <img src={scp_i_type_jalr} alt={"scp_j_type"} />,
     }
 
-    // insert dont cares into control signals and decode them
-    const isJ_Type = current.cpuSnapshot.instructionType === "J_TYPE";
-    const isR_Type = current.cpuSnapshot.instructionType === "R_TYPE";
-    const isI_Type_JALR = current.cpuSnapshot.instructionType === "I_TYPE_JALR";
-    const isU_Type =
-        current.cpuSnapshot.instructionType === "U_TYPE_AUIPC" ||
-        current.cpuSnapshot.instructionType === "U_TYPE_LUI";
-    const isU_Type_LUI = current.cpuSnapshot.instructionType === "U_TYPE_LUI";
+    // current instruction type
+    const currInstType = current.cpuSnapshot.instructionType
 
-    const pcSrc = isJ_Type ? "10" : current.cpuSnapshot.controlSignals.pcSrc ? "01" : "00";
+    // simple booleans for instruction type check
+    const isJ_Type = currInstType === "J_TYPE"
+    const isR_Type = currInstType === "R_TYPE"
+    const isI_Type_JALR = currInstType === "I_TYPE_JALR"
+    const isU_Type = currInstType === "U_TYPE_AUIPC" || currInstType === "U_TYPE_LUI"
+    const isU_Type_LUI = currInstType === "U_TYPE_LUI"
 
-    const immSrc = isR_Type ? "xxx" : (current.cpuSnapshot.controlSignals.immSrc >>> 0).toString(2).padStart(3, "0");
-
-    const resultSrc = isJ_Type || isI_Type_JALR ?
-        "10" : current.cpuSnapshot.controlSignals.resultSrc ? "01" : "00";
-
-    const memWrite = current.cpuSnapshot.controlSignals.memWrite ? 1 : 0;
-
-    const UTypeSel = isU_Type ? (isU_Type_LUI ? "01" : "10") : "00";
-
-    const aluControl = isI_Type_JALR || isU_Type ?
-        "xxxx" : (current.cpuSnapshot.controlSignals.aluControl >>> 0).toString(2).padStart(4, "0");
-
-    const aluSrc = isI_Type_JALR || isU_Type ?
-        "x" : current.cpuSnapshot.controlSignals.aluSrc ? 1 : 0;
-
-    const regWrite = current.cpuSnapshot.controlSignals.regWrite ? 1 : 0;
+    // insert don't-cares into control signals and decode them
+    const pcSrc = isJ_Type ? "10" : current.cpuSnapshot.controlSignals.pcSrc ? "01" : "00"
+    const immSrc = isR_Type ? "xxx" : (current.cpuSnapshot.controlSignals.immSrc >>> 0).toString(2).padStart(3, "0")
+    const resultSrc = isJ_Type || isI_Type_JALR ? "10" : current.cpuSnapshot.controlSignals.resultSrc ? "01" : "00"
+    const memWrite = current.cpuSnapshot.controlSignals.memWrite ? 1 : 0
+    const UTypeSel = isU_Type ? (isU_Type_LUI ? "01" : "10") : "00"
+    const aluControl = isI_Type_JALR || isU_Type ? "xxxx" : (current.cpuSnapshot.controlSignals.aluControl >>> 0).toString(2).padStart(4, "0")
+    const aluSrc = isI_Type_JALR || isU_Type ? "x" : current.cpuSnapshot.controlSignals.aluSrc ? 1 : 0
+    const regWrite = current.cpuSnapshot.controlSignals.regWrite ? 1 : 0
 
 
     return (
@@ -100,6 +97,7 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
                     <img alt={"skipF"} src={skipF} />
                 </button>
             </div>
+
             <div className="output">
                 <div className={"general-output"}>
                     <div>
@@ -109,11 +107,11 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
                     </div>
                     <div>
                         Instruction-Type: {
-                        INSTRUCTION_VIEWS[current.cpuSnapshot.instructionType]
+                        INSTRUCTION_VIEWS[currInstType]
                     }
                     </div>
                     <div>
-                        Binary: {groupedBin}
+                        Binary: {groupedBinary}
                     </div>
                     <div>
                         Hexadecimal: 0x{
@@ -126,7 +124,7 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
 
                 <div className={"image-output"}>
                     {
-                        INSTRUCTION_IMG[current.cpuSnapshot.instructionType]
+                        INSTRUCTION_IMG[currInstType]
                     }
                 </div>
 
