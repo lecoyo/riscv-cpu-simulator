@@ -59,15 +59,18 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
     const isU_Type =
         current.cpuSnapshot.instructionType === "U_TYPE_AUIPC" ||
         current.cpuSnapshot.instructionType === "U_TYPE_LUI";
+    const isU_Type_LUI = current.cpuSnapshot.instructionType === "U_TYPE_LUI";
 
-    const pcSrc = isJ_Type ? "10" : current.cpuSnapshot.controlSignals.pcSrc ? 1 : 0;
+    const pcSrc = isJ_Type ? "10" : current.cpuSnapshot.controlSignals.pcSrc ? "01" : "00";
 
-    const immSrc = isR_Type ? "xx" : current.cpuSnapshot.controlSignals.immSrc;
+    const immSrc = isR_Type ? "xxx" : (current.cpuSnapshot.controlSignals.immSrc >>> 0).toString(2).padStart(3, "0");
 
     const resultSrc = isJ_Type || isI_Type_JALR ?
-        "10" : current.cpuSnapshot.controlSignals.resultSrc ? 1 : 0;
+        "10" : current.cpuSnapshot.controlSignals.resultSrc ? "01" : "00";
 
     const memWrite = current.cpuSnapshot.controlSignals.memWrite ? 1 : 0;
+
+    const UTypeSel = isU_Type ? (isU_Type_LUI ? "01" : "10") : "00";
 
     const aluControl = isI_Type_JALR || isU_Type ?
         "xxxx" : (current.cpuSnapshot.controlSignals.aluControl >>> 0).toString(2).padStart(4, "0");
@@ -132,6 +135,7 @@ function StepVisualizer({ trace, index, onIndexChange }: StepsVisualizerProps) {
                     <div>PCSrc: {pcSrc}</div>
                     <div>ResultSrc: {resultSrc}</div>
                     <div>MemWrite: {memWrite}</div>
+                    <div>UTypeSel: {UTypeSel}</div>
                     <div>ALUControl: {aluControl}</div>
                     <div>ALUSrc: {aluSrc}</div>
                     <div>ImmSrc: {immSrc}</div>
