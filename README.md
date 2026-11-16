@@ -1,8 +1,6 @@
 # RISC-V CPU Simulator
 
-> **Work in progress.** This project is under active development.
-
-This project aims to help understand the underlying architecture of RISC-V processors. 
+This project aims to help understand the underlying architecture of the RISC-V Single-Cycle Processor. 
 It is largely based on the processor design and explanations presented in **Digital Design and Computer Architecture** by Sarah L. Harris and David Harris.
 
 ## Live Demo
@@ -44,6 +42,7 @@ The processor design is largely based on the single-cycle RISC-V microarchitectu
 - **Comments** start with `#` and run to the end of the line.
 - **Labels** end with a colon (`loop:`) and can be used as targets for branches and jumps.
 - Branch and jump targets can also be written as relative byte offsets, for example `beq x1, x2, 8`.
+- Pseudo instructions are *not* supported right now
 - Register names can be written in their corresponding ABI names:
 
 | Register | ABI Name |
@@ -120,3 +119,11 @@ The app is then available at `http://localhost:5173`.
 
 - JDK (for the Spring Boot backend)
 - Node.js and npm (for the frontend)
+
+## Contributing
+
+Contributions are very welcome! If you got any burning questions, feel free contacting
+us via Discord.
+
+- laggson
+- boomer.fortysix

@@ -3,7 +3,6 @@ import Header from './components/Header/Header.tsx'
 import Footer from './components/Footer/Footer.tsx'
 import Home from './pages/Home/Home.tsx'
 import SingleCycle from './pages/SingleCycle/SingleCycle.tsx'
-import Pipelined from './pages/Pipelined.tsx'
 import './App.css'
 
 function App() {
@@ -14,7 +13,6 @@ function App() {
               <Routes>
                   <Route path={"/"} element={<Home />} />
                   <Route path={"/single-cycle"} element={<SingleCycle />} />
-                  <Route path="/pipelined" element={<Pipelined />} />
               </Routes>
           </main>
           <Footer />
